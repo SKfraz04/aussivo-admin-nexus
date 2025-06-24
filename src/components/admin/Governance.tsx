@@ -12,16 +12,10 @@ import {
   Flame, 
   Gift,
   Plus,
-  Eye,
-  Clock,
-  CheckCircle,
-  XCircle,
-  ArrowUpDown,
-  MoreHorizontal,
-  TrendingUp,
-  TrendingDown,
   Calendar,
-  DollarSign
+  DollarSign,
+  TrendingUp,
+  CheckCircle
 } from 'lucide-react';
 import {
   Table,
@@ -32,12 +26,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Tabs,
   TabsContent,
   TabsList,
@@ -47,7 +35,7 @@ import {
 export function Governance() {
   const [activeTab, setActiveTab] = useState('governance');
   const [proposalFilter, setProposalFilter] = useState('all');
-  const [distributionFilter, setDistributionFilter] = useState('rewards');
+  const [rewardsSubTab, setRewardsSubTab] = useState('distribution');
 
   const proposalData = [
     {
@@ -79,28 +67,28 @@ export function Governance() {
       date: '2023-11-01',
       type: 'Staking Rewards',
       amount: '1,875,500 SVR',
-      recipients: 2538,
+      recipients: '2,538',
       status: 'Completed'
     },
     {
       date: '2023-10-25',
       type: 'Referral Rewards',
       amount: '85,000 SVR',
-      recipients: 10,
+      recipients: '10',
       status: 'Completed'
     },
     {
       date: '2023-10-01',
       type: 'Staking Rewards',
       amount: '1,850,000 SVR',
-      recipients: 2471,
+      recipients: '2,471',
       status: 'Completed'
     },
     {
       date: '2023-09-25',
       type: 'Referral Rewards',
       amount: '82,000 SVR',
-      recipients: 10,
+      recipients: '10',
       status: 'Completed'
     }
   ];
@@ -172,6 +160,11 @@ export function Governance() {
 
         {/* Governance (DAO) Content */}
         <TabsContent value="governance" className="space-y-6">
+          <div className="glassmorphism p-4 rounded-xl border border-emerald-800/30">
+            <h2 className="text-xl font-bold text-white mb-2">Governance (DAO)</h2>
+            <p className="text-slate-300 text-sm">Manage platform governance and proposals</p>
+          </div>
+
           {/* Governance Stats */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card className="glassmorphism border-emerald-800/30">
@@ -236,23 +229,23 @@ export function Governance() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="text-slate-300 text-sm font-medium">Proposal Title</label>
                   <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white" placeholder="Enter proposal title" />
                 </div>
                 <div>
                   <label className="text-slate-300 text-sm font-medium">Voting Period (days)</label>
-                  <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white" defaultValue="7" />
+                  <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white" defaultValue="7 days" />
+                </div>
+                <div>
+                  <label className="text-slate-300 text-sm font-medium">Quorum Requirement (%)</label>
+                  <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white" defaultValue="51%" />
                 </div>
               </div>
               <div>
                 <label className="text-slate-300 text-sm font-medium">Proposal Description</label>
                 <Textarea className="mt-1 bg-slate-800/50 border-slate-600 text-white" placeholder="Enter detailed proposal description..." rows={4} />
-              </div>
-              <div>
-                <label className="text-slate-300 text-sm font-medium">Quorum Requirement (%)</label>
-                <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white w-32" defaultValue="51" />
               </div>
               <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
                 Create Proposal
@@ -323,10 +316,15 @@ export function Governance() {
 
         {/* Rewards & Burn Control Content */}
         <TabsContent value="rewards-burn" className="space-y-6">
+          <div className="glassmorphism p-4 rounded-xl border border-emerald-800/30">
+            <h2 className="text-xl font-bold text-white mb-2">Rewards & Burn Control</h2>
+            <p className="text-slate-300 text-sm">Configure rewards distribution and token burning</p>
+          </div>
+
           {/* Sub-tabs for Rewards & Burn */}
-          <Tabs value={distributionFilter} onValueChange={setDistributionFilter} className="space-y-6">
+          <Tabs value={rewardsSubTab} onValueChange={setRewardsSubTab} className="space-y-6">
             <TabsList className="glassmorphism border border-emerald-800/30 bg-slate-900/50">
-              <TabsTrigger value="rewards" className="data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">
+              <TabsTrigger value="distribution" className="data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">
                 <Gift className="w-4 h-4 mr-2" />
                 Rewards Distribution
               </TabsTrigger>
@@ -337,7 +335,7 @@ export function Governance() {
             </TabsList>
 
             {/* Rewards Distribution Tab */}
-            <TabsContent value="rewards" className="space-y-6">
+            <TabsContent value="distribution" className="space-y-6">
               {/* Rewards Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="glassmorphism border-emerald-800/30">
@@ -397,6 +395,7 @@ export function Governance() {
                     <div>
                       <label className="text-slate-300 text-sm font-medium">Staking Rewards Pool</label>
                       <Input className="mt-1 bg-slate-800/50 border-slate-600 text-white" defaultValue="25000000" />
+                      <p className="text-slate-400 text-xs mt-1">SVR tokens allocated for staking rewards</p>
                     </div>
                   </div>
                   <div>
@@ -411,7 +410,7 @@ export function Governance() {
                 </CardContent>
               </Card>
 
-              {/* Distribution Breakdown */}
+              {/* Distribution Breakdown and Recent Distributions */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="glassmorphism border-emerald-800/30">
                   <CardHeader>
@@ -449,9 +448,10 @@ export function Governance() {
                       <TableHeader>
                         <TableRow className="border-emerald-800/30">
                           <TableHead className="text-slate-300">Date</TableHead>
-                          <TableHead className="text-slate-300">Type</TableHead>
-                          <TableHead className="text-slate-300">Amount</TableHead>
+                          <TableHead className="text-slate-300">Distribution Type</TableHead>
+                          <TableHead className="text-slate-300">Total Amount</TableHead>
                           <TableHead className="text-slate-300">Recipients</TableHead>
+                          <TableHead className="text-slate-300">Status</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -461,6 +461,11 @@ export function Governance() {
                             <TableCell className="text-white">{distribution.type}</TableCell>
                             <TableCell className="text-emerald-400">{distribution.amount}</TableCell>
                             <TableCell className="text-slate-300">{distribution.recipients}</TableCell>
+                            <TableCell>
+                              <Badge className={getStatusBadge(distribution.status)}>
+                                {distribution.status}
+                              </Badge>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -473,7 +478,7 @@ export function Governance() {
             {/* Token Burn & Buyback Tab */}
             <TabsContent value="burn" className="space-y-6">
               {/* Burn Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="glassmorphism border-emerald-800/30">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
@@ -512,19 +517,6 @@ export function Governance() {
                     </div>
                   </CardContent>
                 </Card>
-
-                <Card className="glassmorphism border-emerald-800/30">
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-slate-400 text-sm">Treasury Balance</p>
-                        <p className="text-2xl font-bold text-white">3,500,000 SVR</p>
-                        <p className="text-slate-400 text-sm">Available for burn</p>
-                      </div>
-                      <DollarSign className="w-8 h-8 text-blue-400" />
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
 
               {/* Buy-Back & Burn Mechanism */}
@@ -547,17 +539,22 @@ export function Governance() {
                       </Button>
                     </div>
                     <p className="text-slate-400 text-xs mt-2">
-                      Auto-buyback automatically uses a percentage of platform revenue to purchase SVR tokens from the market and burn them, reducing total supply and potentially increasing token value.
+                      Percentage of platform revenue used for token buy-back and burn
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-800/30 rounded-lg">
-                    <div>
-                      <p className="text-slate-300 text-sm">Buy-Back Schedule:</p>
-                      <p className="text-white">Monthly, on the 15th of each month</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-300 text-sm">Last Auto-Buyback:</p>
-                      <p className="text-white">November 15, 2023 - 1,500,000 SVR burned</p>
+                  <div>
+                    <p className="text-slate-400 text-sm mb-4">
+                      Auto-buyback automatically uses a percentage of platform revenue to purchase SVR tokens from the market and burn them, reducing total supply and potentially increasing token value.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-800/30 rounded-lg">
+                      <div>
+                        <p className="text-slate-300 text-sm font-medium">Buy-Back Schedule:</p>
+                        <p className="text-white">Monthly, on the 15th of each month</p>
+                      </div>
+                      <div>
+                        <p className="text-slate-300 text-sm font-medium">Last Auto-Buyback:</p>
+                        <p className="text-white">November 15, 2023 - 1,500,000 SVR burned</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -579,6 +576,18 @@ export function Governance() {
                     </Button>
                   </div>
                   <p className="text-slate-400 text-sm">Permanently remove tokens from circulation</p>
+                  
+                  <div className="p-4 bg-slate-800/30 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-slate-300 text-sm font-medium">Treasury Balance</p>
+                        <p className="text-slate-400 text-sm">Available for burn:</p>
+                        <p className="text-white font-medium">3,500,000 SVR</p>
+                      </div>
+                      <DollarSign className="w-8 h-8 text-blue-400" />
+                    </div>
+                  </div>
+
                   <div className="p-4 bg-red-900/20 border border-red-600/30 rounded-lg">
                     <p className="text-red-400 font-medium">⚠️ WARNING</p>
                     <p className="text-slate-300 text-sm">Token burns are irreversible. Please double check the amount before proceeding.</p>
@@ -616,6 +625,18 @@ export function Governance() {
                       ))}
                     </TableBody>
                   </Table>
+                </CardContent>
+              </Card>
+
+              {/* Burn Impact Analysis */}
+              <Card className="glassmorphism border-emerald-800/30">
+                <CardHeader>
+                  <CardTitle className="text-white">Burn Impact Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-8 bg-slate-800/30 rounded-lg border border-emerald-800/20 text-center">
+                    <p className="text-slate-400">Charts showing burn impact on token supply and price would be displayed here</p>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
