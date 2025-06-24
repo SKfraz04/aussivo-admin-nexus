@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,7 +66,8 @@ export function AdminDashboard() {
       change: metrics.userGrowth,
       trend: 'up',
       icon: Users,
-      description: 'Last 7 days'
+      description: 'Last 7 days',
+      gradient: 'from-blue-400 to-purple-500'
     },
     {
       title: 'ASVO Staked',
@@ -73,7 +75,8 @@ export function AdminDashboard() {
       change: metrics.stakingGrowth,
       trend: 'up',
       icon: Coins,
-      description: 'Total value locked'
+      description: 'Total value locked',
+      gradient: 'from-emerald-400 to-teal-500'
     },
     {
       title: 'TVL',
@@ -81,7 +84,8 @@ export function AdminDashboard() {
       change: metrics.tvlGrowth,
       trend: 'up',
       icon: DollarSign,
-      description: 'USD equivalent'
+      description: 'USD equivalent',
+      gradient: 'from-yellow-400 to-orange-500'
     },
     {
       title: 'ICO Progress',
@@ -89,7 +93,8 @@ export function AdminDashboard() {
       change: '13.5M ASVO',
       trend: 'neutral',
       icon: TrendingUp,
-      description: 'of 100M supply'
+      description: 'of 100M supply',
+      gradient: 'from-pink-400 to-rose-500'
     }
   ];
 
@@ -129,25 +134,27 @@ export function AdminDashboard() {
   ];
 
   const topPerformers = [
-    { name: 'Core Validator', staked: '25M ASVO', users: 1250, apy: '12%' },
-    { name: 'Premium Staker', staked: '18M ASVO', users: 890, apy: '10%' },
-    { name: 'Basic Staker', staked: '15M ASVO', users: 2100, apy: '8%' },
-    { name: 'Starter Package', staked: '12M ASVO', users: 3200, apy: '6%' }
+    { name: 'Core Validator', staked: '25M ASVO', users: 1250, apy: '12%', color: 'from-emerald-500 to-teal-400' },
+    { name: 'Premium Staker', staked: '18M ASVO', users: 890, apy: '10%', color: 'from-blue-500 to-cyan-400' },
+    { name: 'Basic Staker', staked: '15M ASVO', users: 2100, apy: '8%', color: 'from-purple-500 to-pink-400' },
+    { name: 'Starter Package', staked: '12M ASVO', users: 3200, apy: '6%', color: 'from-orange-500 to-yellow-400' }
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 animate-fade-in">
       {/* Header Section */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-slate-400">Welcome back, here's what's happening with your platform today.</p>
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-teal-300 bg-clip-text text-transparent">
+            Dashboard
+          </h1>
+          <p className="text-slate-400 text-lg">Welcome back, here's what's happening with your platform today.</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <Button 
             variant="outline" 
-            className={`border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 ${
-              isLive ? 'bg-emerald-600/20 border-emerald-400' : ''
+            className={`border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 transition-all duration-300 hover:scale-105 ${
+              isLive ? 'bg-emerald-600/20 border-emerald-400 shadow-lg shadow-emerald-500/20' : ''
             }`}
             onClick={handleLiveDataToggle}
           >
@@ -155,7 +162,7 @@ export function AdminDashboard() {
             {isLive ? 'Live Data ON' : 'Live Data'}
           </Button>
           <Button 
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
             onClick={handleAnalyticsOpen}
           >
             <TrendingUp className="h-4 w-4 mr-2" />
@@ -166,24 +173,32 @@ export function AdminDashboard() {
 
       {/* Live Data Indicator */}
       {isLive && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-600/10 border border-emerald-600/30 rounded-lg">
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-          <span className="text-emerald-400 text-sm">Live data updates active - refreshing every 2 seconds</span>
+        <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-600/10 via-emerald-500/10 to-teal-600/10 border border-emerald-600/30 rounded-xl backdrop-blur-sm animate-scale-in">
+          <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
+          <span className="text-emerald-400 font-medium">Live data updates active - refreshing every 2 seconds</span>
         </div>
       )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {kpiData.map((kpi, index) => (
-          <Card key={index} className="glassmorphism border-emerald-800/30 hover:border-emerald-600/50 transition-all duration-300">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-slate-300">
+          <Card 
+            key={index} 
+            className="glassmorphism border-emerald-800/30 hover:border-emerald-600/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/10 group animate-fade-in"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
                 {kpi.title}
               </CardTitle>
-              <kpi.icon className="h-4 w-4 text-emerald-400" />
+              <div className={`p-2 rounded-lg bg-gradient-to-r ${kpi.gradient} bg-opacity-20 group-hover:scale-110 transition-transform duration-300`}>
+                <kpi.icon className="h-4 w-4 text-white" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-white">{kpi.value}</div>
+            <CardContent className="space-y-3">
+              <div className={`text-3xl font-bold bg-gradient-to-r ${kpi.gradient} bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300`}>
+                {kpi.value}
+              </div>
               <div className="flex items-center space-x-2 text-xs">
                 <div className={`flex items-center ${
                   kpi.trend === 'up' ? 'text-emerald-400' : 
@@ -191,9 +206,9 @@ export function AdminDashboard() {
                 }`}>
                   {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3" /> :
                    kpi.trend === 'down' ? <ArrowDownRight className="h-3 w-3" /> : null}
-                  <span>{kpi.change}</span>
+                  <span className="font-medium">{kpi.change}</span>
                 </div>
-                <span className="text-slate-400">{kpi.description}</span>
+                <span className="text-slate-500">{kpi.description}</span>
               </div>
             </CardContent>
           </Card>
@@ -201,43 +216,49 @@ export function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <Card className="lg:col-span-2 glassmorphism border-emerald-800/30">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-white">Recent Activity</CardTitle>
-            <p className="text-slate-400 text-sm">Latest platform transactions</p>
+      <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <CardHeader className="flex flex-row items-center justify-between pb-6">
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+              Recent Activity
+            </CardTitle>
+            <p className="text-slate-400">Latest platform transactions</p>
           </div>
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-emerald-600/20 transition-all duration-300">
             <MoreHorizontal className="h-4 w-4" />
           </Button>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivity.map((activity) => (
-              <div key={activity.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20 hover:border-emerald-600/30 transition-colors">
+            {recentActivity.map((activity, index) => (
+              <div 
+                key={activity.id} 
+                className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-slate-800/30 to-slate-700/20 border border-emerald-800/20 hover:border-emerald-600/40 transition-all duration-300 hover:scale-[1.02] group animate-scale-in"
+                style={{ animationDelay: `${0.6 + index * 0.1}s` }}
+              >
                 <div className="flex items-center space-x-4">
-                  <Avatar className="h-9 w-9">
-                    <AvatarFallback className="bg-emerald-600/20 text-emerald-400 text-xs">
+                  <Avatar className="h-10 w-10 ring-2 ring-emerald-500/20 group-hover:ring-emerald-400/40 transition-all duration-300">
+                    <AvatarFallback className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 text-emerald-400 text-sm font-medium">
                       {activity.user.avatar}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="text-white font-medium text-sm">{activity.user.name}</p>
-                    <p className="text-slate-400 text-xs">{activity.action} • {activity.amount}</p>
+                    <p className="text-white font-medium">{activity.user.name}</p>
+                    <p className="text-slate-400 text-sm">{activity.action} • <span className="text-emerald-400">{activity.amount}</span></p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right space-y-1">
                   <Badge 
                     variant={activity.status === 'completed' ? 'default' : activity.status === 'pending' ? 'secondary' : 'destructive'}
-                    className={`text-xs ${
-                      activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50' :
-                      activity.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50' :
-                      'bg-red-600/20 text-red-400 border-red-600/50'
+                    className={`text-xs transition-all duration-300 ${
+                      activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50 hover:bg-emerald-600/30' :
+                      activity.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50 hover:bg-yellow-600/30' :
+                      'bg-red-600/20 text-red-400 border-red-600/50 hover:bg-red-600/30'
                     }`}
                   >
                     {activity.status}
                   </Badge>
-                  <p className="text-slate-400 text-xs mt-1">{activity.time}</p>
+                  <p className="text-slate-500 text-xs">{activity.time}</p>
                 </div>
               </div>
             ))}
@@ -246,29 +267,48 @@ export function AdminDashboard() {
       </Card>
 
       {/* Top Performing Packages */}
-      <Card className="glassmorphism border-emerald-800/30">
-        <CardHeader>
-          <CardTitle className="text-white">Top Packages</CardTitle>
-          <p className="text-slate-400 text-sm">Most popular staking tiers</p>
+      <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+        <CardHeader className="pb-6">
+          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+            Top Packages
+          </CardTitle>
+          <p className="text-slate-400">Most popular staking tiers</p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {topPerformers.map((package_, index) => (
-              <div key={index} className="space-y-2">
+              <div 
+                key={index} 
+                className="space-y-3 p-4 rounded-xl bg-gradient-to-r from-slate-800/20 to-slate-700/10 hover:from-slate-800/40 hover:to-slate-700/20 transition-all duration-300 hover:scale-[1.02] group animate-scale-in"
+                style={{ animationDelay: `${0.8 + index * 0.1}s` }}
+              >
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-medium text-sm">{package_.name}</p>
-                    <p className="text-slate-400 text-xs">{package_.users} users</p>
+                  <div className="space-y-1">
+                    <p className={`text-white font-semibold text-lg bg-gradient-to-r ${package_.color} bg-clip-text text-transparent`}>
+                      {package_.name}
+                    </p>
+                    <p className="text-slate-400 text-sm">{package_.users.toLocaleString()} users</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-emerald-400 font-medium text-sm">{package_.apy}</p>
-                    <p className="text-slate-400 text-xs">{package_.staked}</p>
+                  <div className="text-right space-y-1">
+                    <p className={`font-bold text-lg bg-gradient-to-r ${package_.color} bg-clip-text text-transparent`}>
+                      {package_.apy}
+                    </p>
+                    <p className="text-slate-400 text-sm">{package_.staked}</p>
                   </div>
                 </div>
-                <Progress 
-                  value={85 - (index * 15)} 
-                  className="h-2 bg-slate-800"
-                />
+                <div className="relative">
+                  <Progress 
+                    value={85 - (index * 15)} 
+                    className="h-3 bg-slate-800/50 overflow-hidden"
+                  />
+                  <div 
+                    className={`absolute top-0 left-0 h-3 bg-gradient-to-r ${package_.color} rounded-full transition-all duration-1000 ease-out shadow-lg`}
+                    style={{ 
+                      width: `${85 - (index * 15)}%`,
+                      animationDelay: `${1 + index * 0.2}s`
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -276,63 +316,47 @@ export function AdminDashboard() {
       </Card>
 
       {/* Bottom Statistics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">System Health</CardTitle>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 hover:scale-[1.02] animate-fade-in" style={{ animationDelay: '1.2s' }}>
+          <CardHeader className="pb-6">
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+              Token Metrics
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Uptime</span>
-              <span className="text-emerald-400 font-medium">{metrics.uptime}</span>
+          <CardContent className="space-y-6">
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">Price</span>
+              <span className="text-emerald-400 font-bold text-lg">{metrics.tokenPrice}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Response Time</span>
-              <span className="text-emerald-400 font-medium">{metrics.responseTime}</span>
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">Market Cap</span>
+              <span className="text-emerald-400 font-bold text-lg">{metrics.marketCap}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Active Sessions</span>
-              <span className="text-emerald-400 font-medium">{metrics.activeSessions.toLocaleString()}</span>
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">24h Volume</span>
+              <span className="text-emerald-400 font-bold text-lg">{metrics.volume24h}</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">Token Metrics</CardTitle>
+        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 hover:scale-[1.02] animate-fade-in" style={{ animationDelay: '1.3s' }}>
+          <CardHeader className="pb-6">
+            <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+              Growth Metrics
+            </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Price</span>
-              <span className="text-emerald-400 font-medium">{metrics.tokenPrice}</span>
+          <CardContent className="space-y-6">
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">New Users</span>
+              <span className="text-emerald-400 font-bold text-lg">+{metrics.newUsers}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Market Cap</span>
-              <span className="text-emerald-400 font-medium">{metrics.marketCap}</span>
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">Weekly Growth</span>
+              <span className="text-emerald-400 font-bold text-lg">{metrics.weeklyGrowth}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">24h Volume</span>
-              <span className="text-emerald-400 font-medium">{metrics.volume24h}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">Growth Metrics</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">New Users</span>
-              <span className="text-emerald-400 font-medium">+{metrics.newUsers}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Weekly Growth</span>
-              <span className="text-emerald-400 font-medium">{metrics.weeklyGrowth}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-slate-300">Revenue</span>
-              <span className="text-emerald-400 font-medium">{metrics.revenue}</span>
+            <div className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-slate-800/30 to-slate-700/20 hover:from-slate-800/50 hover:to-slate-700/30 transition-all duration-300">
+              <span className="text-slate-300 font-medium">Revenue</span>
+              <span className="text-emerald-400 font-bold text-lg">{metrics.revenue}</span>
             </div>
           </CardContent>
         </Card>
