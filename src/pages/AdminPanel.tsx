@@ -4,18 +4,26 @@ import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { AdminDashboard } from '../components/admin/AdminDashboard';
 import { UsersWallets } from '../components/admin/UsersWallets';
 import { DepositsTransactions } from '../components/admin/DepositsTransactions';
-import { Configuration } from '../components/admin/Configuration';
-import { Governance } from '../components/admin/Governance';
-import { Reports } from '../components/admin/Reports';
+import { TokenPackageControl } from '../components/admin/TokenPackageControl';
+import { StakingAPYSettings } from '../components/admin/StakingAPYSettings';
+import { ReferralsLeaderboard } from '../components/admin/ReferralsLeaderboard';
+import { GovernanceDAO } from '../components/admin/GovernanceDAO';
+import { RewardsBurnControl } from '../components/admin/RewardsBurnControl';
+import { StakingHistoryPackages } from '../components/admin/StakingHistoryPackages';
+import { ReportsAnalytics } from '../components/admin/ReportsAnalytics';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export type AdminSection = 
   | 'dashboard' 
   | 'users-wallets' 
-  | 'deposits-transactions' 
-  | 'configuration' 
-  | 'governance' 
-  | 'reports';
+  | 'deposits-transactions'
+  | 'token-package-control'
+  | 'staking-apy-settings'
+  | 'referrals-leaderboard'
+  | 'governance-dao'
+  | 'rewards-burn-control'
+  | 'staking-history-packages'
+  | 'reports-analytics';
 
 const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
@@ -28,12 +36,20 @@ const AdminPanel = () => {
         return <UsersWallets />;
       case 'deposits-transactions':
         return <DepositsTransactions />;
-      case 'configuration':
-        return <Configuration />;
-      case 'governance':
-        return <Governance />;
-      case 'reports':
-        return <Reports />;
+      case 'token-package-control':
+        return <TokenPackageControl />;
+      case 'staking-apy-settings':
+        return <StakingAPYSettings />;
+      case 'referrals-leaderboard':
+        return <ReferralsLeaderboard />;
+      case 'governance-dao':
+        return <GovernanceDAO />;
+      case 'rewards-burn-control':
+        return <RewardsBurnControl />;
+      case 'staking-history-packages':
+        return <StakingHistoryPackages />;
+      case 'reports-analytics':
+        return <ReportsAnalytics />;
       default:
         return <AdminDashboard />;
     }

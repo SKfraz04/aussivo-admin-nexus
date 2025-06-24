@@ -6,13 +6,21 @@ import {
   Settings,
   Vote,
   FileText,
-  Home
+  Home,
+  Coins,
+  TrendingUp,
+  Trophy,
+  Shield,
+  Flame,
+  History,
+  PieChart
 } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -26,37 +34,77 @@ interface AdminSidebarProps {
   setActiveSection: (section: AdminSection) => void;
 }
 
-const menuItems = [
+const menuGroups = [
   {
-    title: 'Dashboard',
-    section: 'dashboard' as AdminSection,
-    icon: Home,
-  },
-  {
-    title: 'Users & Wallets',
-    section: 'users-wallets' as AdminSection,
-    icon: Users,
-  },
-  {
-    title: 'Deposits & Transactions',
-    section: 'deposits-transactions' as AdminSection,
-    icon: CreditCard,
+    title: 'Management',
+    items: [
+      {
+        title: 'Dashboard',
+        section: 'dashboard' as AdminSection,
+        icon: Home,
+      },
+      {
+        title: 'Users & Wallets',
+        section: 'users-wallets' as AdminSection,
+        icon: Users,
+      },
+      {
+        title: 'Deposits & Transactions',
+        section: 'deposits-transactions' as AdminSection,
+        icon: CreditCard,
+      },
+    ]
   },
   {
     title: 'Configuration',
-    section: 'configuration' as AdminSection,
-    icon: Settings,
+    items: [
+      {
+        title: 'Token & Package Control',
+        section: 'token-package-control' as AdminSection,
+        icon: Coins,
+      },
+      {
+        title: 'Staking & APY Settings',
+        section: 'staking-apy-settings' as AdminSection,
+        icon: TrendingUp,
+      },
+      {
+        title: 'Referrals & Leaderboard',
+        section: 'referrals-leaderboard' as AdminSection,
+        icon: Trophy,
+      },
+    ]
   },
   {
     title: 'Governance',
-    section: 'governance' as AdminSection,
-    icon: Vote,
+    items: [
+      {
+        title: 'Governance (DAO)',
+        section: 'governance-dao' as AdminSection,
+        icon: Shield,
+      },
+      {
+        title: 'Rewards & Burn Control',
+        section: 'rewards-burn-control' as AdminSection,
+        icon: Flame,
+      },
+    ]
   },
   {
     title: 'Reports',
-    section: 'reports' as AdminSection,
-    icon: FileText,
-  },
+    items: [
+      {
+        title: 'Staking History & Packages',
+        section: 'staking-history-packages' as AdminSection,
+        icon: History,
+      },
+      {
+        title: 'Reports & Analytics',
+        section: 'reports-analytics' as AdminSection,
+        icon: PieChart,
+      },
+    ]
+  }
 ];
 
 export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarProps) {
@@ -77,32 +125,37 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
         </div>
       </SidebarHeader>
       <SidebarContent className="bg-slate-900/50 backdrop-blur-sm">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.section}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={activeSection === item.section}
-                    className={`
-                      w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-200
-                      ${activeSection === item.section 
-                        ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg' 
-                        : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
-                      }
-                    `}
-                  >
-                    <button onClick={() => setActiveSection(item.section)}>
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium">{item.title}</span>
-                    </button>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {menuGroups.map((group) => (
+          <SidebarGroup key={group.title}>
+            <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
+              {group.title}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => (
+                  <SidebarMenuItem key={item.section}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={activeSection === item.section}
+                      className={`
+                        w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-200
+                        ${activeSection === item.section 
+                          ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg' 
+                          : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                        }
+                      `}
+                    >
+                      <button onClick={() => setActiveSection(item.section)}>
+                        <item.icon className="w-5 h-5" />
+                        <span className="font-medium">{item.title}</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </Sidebar>
   );
