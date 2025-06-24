@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from 'recharts';
 import { Download, TrendingUp, Users, DollarSign, Activity } from 'lucide-react';
 
 interface AnalyticsModalProps {
@@ -39,6 +39,22 @@ const config = {
   volume: {
     label: "Volume",
     color: "#8b5cf6",
+  },
+  "Core Validator": {
+    label: "Core Validator",
+    color: "#10b981",
+  },
+  "Premium Staker": {
+    label: "Premium Staker",
+    color: "#06b6d4",
+  },
+  "Basic Staker": {
+    label: "Basic Staker",
+    color: "#8b5cf6",
+  },
+  "Starter Package": {
+    label: "Starter Package",
+    color: "#f59e0b",
   },
 };
 
@@ -154,7 +170,7 @@ export function AnalyticsModal({ open, onOpenChange }: AnalyticsModalProps) {
                 <CardTitle className="text-white">Package Distribution</CardTitle>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
+                <ChartContainer config={config} className="h-64">
                   <PieChart>
                     <Pie
                       data={pieData}
@@ -169,7 +185,7 @@ export function AnalyticsModal({ open, onOpenChange }: AnalyticsModalProps) {
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
                   </PieChart>
-                </ResponsiveContainer>
+                </ChartContainer>
                 <div className="mt-4 space-y-2">
                   {pieData.map((item, index) => (
                     <div key={index} className="flex items-center justify-between">
