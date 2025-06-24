@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,36 +24,68 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useRealTimeData } from '@/hooks/useRealTimeData';
+import { AnalyticsModal } from './AnalyticsModal';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export function AdminDashboard() {
+  const { isLive, metrics, startLiveData, stopLiveData } = useRealTimeData();
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const { toast } = useToast();
+
+  const handleLiveDataToggle = () => {
+    if (isLive) {
+      stopLiveData();
+      toast({
+        title: "Live Data Stopped",
+        description: "Real-time data updates have been paused.",
+      });
+    } else {
+      startLiveData();
+      toast({
+        title: "Live Data Started",
+        description: "Real-time data updates are now active.",
+      });
+    }
+  };
+
+  const handleAnalyticsOpen = () => {
+    setShowAnalytics(true);
+    toast({
+      title: "Analytics Opened",
+      description: "Displaying advanced analytics dashboard.",
+    });
+  };
+
   const kpiData = [
     {
       title: 'Total Users',
-      value: '15,432',
-      change: '+12.5%',
+      value: metrics.totalUsers.toLocaleString(),
+      change: metrics.userGrowth,
       trend: 'up',
       icon: Users,
       description: 'Last 7 days'
     },
     {
       title: 'ASVO Staked',
-      value: '75M',
-      change: '+8.3%',
+      value: metrics.asvoStaked,
+      change: metrics.stakingGrowth,
       trend: 'up',
       icon: Coins,
       description: 'Total value locked'
     },
     {
       title: 'TVL',
-      value: '$3.75M',
-      change: '+15.7%',
+      value: metrics.tvl,
+      change: metrics.tvlGrowth,
       trend: 'up',
       icon: DollarSign,
       description: 'USD equivalent'
     },
     {
       title: 'ICO Progress',
-      value: '13.5%',
+      value: `${metrics.icoProgress.toFixed(1)}%`,
       change: '13.5M ASVO',
       trend: 'neutral',
       icon: TrendingUp,
@@ -113,16 +144,33 @@ export function AdminDashboard() {
           <p className="text-slate-400">Welcome back, here's what's happening with your platform today.</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
-            <Activity className="h-4 w-4 mr-2" />
-            Live Data
+          <Button 
+            variant="outline" 
+            className={`border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 ${
+              isLive ? 'bg-emerald-600/20 border-emerald-400' : ''
+            }`}
+            onClick={handleLiveDataToggle}
+          >
+            <Activity className={`h-4 w-4 mr-2 ${isLive ? 'animate-pulse' : ''}`} />
+            {isLive ? 'Live Data ON' : 'Live Data'}
           </Button>
-          <Button className="bg-emerald-600 hover:bg-emerald-700">
+          <Button 
+            className="bg-emerald-600 hover:bg-emerald-700"
+            onClick={handleAnalyticsOpen}
+          >
             <TrendingUp className="h-4 w-4 mr-2" />
             Analytics
           </Button>
         </div>
       </div>
+
+      {/* Live Data Indicator */}
+      {isLive && (
+        <div className="flex items-center gap-2 p-3 bg-emerald-600/10 border border-emerald-600/30 rounded-lg">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+          <span className="text-emerald-400 text-sm">Live data updates active - refreshing every 2 seconds</span>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -152,82 +200,80 @@ export function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Activity */}
-        <Card className="lg:col-span-2 glassmorphism border-emerald-800/30">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle className="text-white">Recent Activity</CardTitle>
-              <p className="text-slate-400 text-sm">Latest platform transactions</p>
-            </div>
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20 hover:border-emerald-600/30 transition-colors">
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-9 w-9">
-                      <AvatarFallback className="bg-emerald-600/20 text-emerald-400 text-xs">
-                        {activity.user.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-white font-medium text-sm">{activity.user.name}</p>
-                      <p className="text-slate-400 text-xs">{activity.action} • {activity.amount}</p>
-                    </div>
+      {/* Recent Activity */}
+      <Card className="lg:col-span-2 glassmorphism border-emerald-800/30">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-white">Recent Activity</CardTitle>
+            <p className="text-slate-400 text-sm">Latest platform transactions</p>
+          </div>
+          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentActivity.map((activity) => (
+              <div key={activity.id} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20 hover:border-emerald-600/30 transition-colors">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-emerald-600/20 text-emerald-400 text-xs">
+                      {activity.user.avatar}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="text-white font-medium text-sm">{activity.user.name}</p>
+                    <p className="text-slate-400 text-xs">{activity.action} • {activity.amount}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <Badge 
+                    variant={activity.status === 'completed' ? 'default' : activity.status === 'pending' ? 'secondary' : 'destructive'}
+                    className={`text-xs ${
+                      activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50' :
+                      activity.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50' :
+                      'bg-red-600/20 text-red-400 border-red-600/50'
+                    }`}
+                  >
+                    {activity.status}
+                  </Badge>
+                  <p className="text-slate-400 text-xs mt-1">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Top Performing Packages */}
+      <Card className="glassmorphism border-emerald-800/30">
+        <CardHeader>
+          <CardTitle className="text-white">Top Packages</CardTitle>
+          <p className="text-slate-400 text-sm">Most popular staking tiers</p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {topPerformers.map((package_, index) => (
+              <div key={index} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-white font-medium text-sm">{package_.name}</p>
+                    <p className="text-slate-400 text-xs">{package_.users} users</p>
                   </div>
                   <div className="text-right">
-                    <Badge 
-                      variant={activity.status === 'completed' ? 'default' : activity.status === 'pending' ? 'secondary' : 'destructive'}
-                      className={`text-xs ${
-                        activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50' :
-                        activity.status === 'pending' ? 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50' :
-                        'bg-red-600/20 text-red-400 border-red-600/50'
-                      }`}
-                    >
-                      {activity.status}
-                    </Badge>
-                    <p className="text-slate-400 text-xs mt-1">{activity.time}</p>
+                    <p className="text-emerald-400 font-medium text-sm">{package_.apy}</p>
+                    <p className="text-slate-400 text-xs">{package_.staked}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Top Performing Packages */}
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardHeader>
-            <CardTitle className="text-white">Top Packages</CardTitle>
-            <p className="text-slate-400 text-sm">Most popular staking tiers</p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {topPerformers.map((package_, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-white font-medium text-sm">{package_.name}</p>
-                      <p className="text-slate-400 text-xs">{package_.users} users</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-emerald-400 font-medium text-sm">{package_.apy}</p>
-                      <p className="text-slate-400 text-xs">{package_.staked}</p>
-                    </div>
-                  </div>
-                  <Progress 
-                    value={85 - (index * 15)} 
-                    className="h-2 bg-slate-800"
-                  />
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                <Progress 
+                  value={85 - (index * 15)} 
+                  className="h-2 bg-slate-800"
+                />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Bottom Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -238,15 +284,15 @@ export function AdminDashboard() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Uptime</span>
-              <span className="text-emerald-400 font-medium">99.98%</span>
+              <span className="text-emerald-400 font-medium">{metrics.uptime}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Response Time</span>
-              <span className="text-emerald-400 font-medium">142ms</span>
+              <span className="text-emerald-400 font-medium">{metrics.responseTime}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Active Sessions</span>
-              <span className="text-emerald-400 font-medium">2,847</span>
+              <span className="text-emerald-400 font-medium">{metrics.activeSessions.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
@@ -258,15 +304,15 @@ export function AdminDashboard() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Price</span>
-              <span className="text-emerald-400 font-medium">$0.048</span>
+              <span className="text-emerald-400 font-medium">{metrics.tokenPrice}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Market Cap</span>
-              <span className="text-emerald-400 font-medium">$4.2M</span>
+              <span className="text-emerald-400 font-medium">{metrics.marketCap}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">24h Volume</span>
-              <span className="text-emerald-400 font-medium">$156K</span>
+              <span className="text-emerald-400 font-medium">{metrics.volume24h}</span>
             </div>
           </CardContent>
         </Card>
@@ -278,19 +324,25 @@ export function AdminDashboard() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-slate-300">New Users</span>
-              <span className="text-emerald-400 font-medium">+247</span>
+              <span className="text-emerald-400 font-medium">+{metrics.newUsers}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Weekly Growth</span>
-              <span className="text-emerald-400 font-medium">+23.4%</span>
+              <span className="text-emerald-400 font-medium">{metrics.weeklyGrowth}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-slate-300">Revenue</span>
-              <span className="text-emerald-400 font-medium">$89.2K</span>
+              <span className="text-emerald-400 font-medium">{metrics.revenue}</span>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Analytics Modal */}
+      <AnalyticsModal 
+        open={showAnalytics} 
+        onOpenChange={setShowAnalytics}
+      />
     </div>
   );
 }
