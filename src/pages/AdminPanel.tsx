@@ -30,43 +30,42 @@ const AdminPanel = () => {
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
 
   const renderActiveSection = () => {
-    switch (activeSection) {
-      case 'dashboard':
-        return <AdminDashboard />;
-      case 'users-wallets':
-        return <UsersWallets />;
-      case 'deposits-transactions':
-        return <DepositsTransactions />;
-      case 'token-package-control':
-        return <TokenPackageControl />;
-      case 'staking-apy-settings':
-        return <StakingAPYSettings />;
-      case 'referrals-leaderboard':
-        return <ReferralsLeaderboard />;
-      case 'governance-dao':
-        return <GovernanceDAO />;
-      case 'rewards-burn-control':
-        return <RewardsBurnControl />;
-      case 'staking-history-packages':
-        return <StakingHistoryPackages />;
-      case 'reports-analytics':
-        return <ReportsAnalytics />;
-      default:
-        return <AdminDashboard />;
-    }
+    const sectionComponents = {
+      'dashboard': <AdminDashboard />,
+      'users-wallets': <UsersWallets />,
+      'deposits-transactions': <DepositsTransactions />,
+      'token-package-control': <TokenPackageControl />,
+      'staking-apy-settings': <StakingAPYSettings />,
+      'referrals-leaderboard': <ReferralsLeaderboard />,
+      'governance-dao': <GovernanceDAO />,
+      'rewards-burn-control': <RewardsBurnControl />,
+      'staking-history-packages': <StakingHistoryPackages />,
+      'reports-analytics': <ReportsAnalytics />,
+    };
+
+    return (
+      <div className="animate-fade-in" key={activeSection}>
+        {sectionComponents[activeSection] || <AdminDashboard />}
+      </div>
+    );
   };
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex flex-col w-full bg-black">
+      <div className="min-h-screen flex flex-col w-full bg-black animate-fade-in">
         <AdminHeader />
         <div className="flex flex-1">
           <AdminSidebar 
             activeSection={activeSection} 
             setActiveSection={setActiveSection} 
           />
-          <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black">
-            <div className="max-w-7xl mx-auto">
+          <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black relative">
+            {/* Animated background elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-950/5 via-transparent to-teal-950/5 pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/2 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-500/2 rounded-full blur-3xl animate-pulse pointer-events-none" style={{ animationDelay: '2s' }}></div>
+            
+            <div className="max-w-7xl mx-auto relative z-10">
               {renderActiveSection()}
             </div>
           </main>
