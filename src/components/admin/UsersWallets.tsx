@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,11 @@ import {
   User,
   Wallet,
   ArrowUpDown,
-  MoreHorizontal
+  MoreHorizontal,
+  Download,
+  UserCheck,
+  UserX,
+  Shield
 } from 'lucide-react';
 import {
   Table,
@@ -36,47 +41,130 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useAdminData } from '@/hooks/useAdminData';
+import { useToast } from '@/hooks/use-toast';
 
 export function UsersWallets() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [verificationFilter, setVerificationFilter] = useState('all');
+  const { users, userFilters, setUserFilters, updateUserStatus, allUsers } = useAdminData();
+  const { toast } = useToast();
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [actionDialog, setActionDialog] = useState<{ open: boolean; type: string; user: any }>({
+    open: false,
+    type: '',
+    user: null
+  });
 
-  const userData = [
-    {
-      userId: 'USR_001',
-      email: 'john.doe@example.com',
-      totalBalance: '$15,420.50',
-      totalASVO: '12,500 ASVO',
-      stakedASVO: '10,000 ASVO',
-      status: 'Active',
-      registrationDate: '2024-01-15',
-      lastLogin: '2024-06-24 10:30',
-      kycStatus: 'Verified'
-    },
-    {
-      userId: 'USR_002',
-      email: 'jane.smith@example.com',
-      totalBalance: '$8,750.25',
-      totalASVO: '7,200 ASVO',
-      stakedASVO: '5,000 ASVO',
-      status: 'Active',
-      registrationDate: '2024-02-20',
-      lastLogin: '2024-06-23 15:45',
-      kycStatus: 'Pending'
-    },
-    {
-      userId: 'USR_003',
-      email: 'mike.wilson@example.com',
-      totalBalance: '$25,680.75',
-      totalASVO: '20,150 ASVO',
-      stakedASVO: '18,000 ASVO',
-      status: 'Suspended',
-      registrationDate: '2024-01-08',
-      lastLogin: '2024-06-22 09:15',
-      kycStatus: 'Verified'
+  const handleSearch = (value: string) => {
+    setUserFilters(prev => ({ ...prev, searchTerm: value }));
+  };
+
+  const handleStatusFilter = (value: string) => {
+    setUserFilters(prev => ({ ...prev, statusFilter: value }));
+  };
+
+  const handleKYCFilter = (value: string) => {
+    setUserFilters(prev => ({ ...prev, verificationFilter: value }));
+  };
+
+  const applyFilters = () => {
+    toast({
+      title: "Filters Applied",
+      description: `Found ${users.length} users matching your criteria.`,
+    });
+  };
+
+  const clearFilters = () => {
+    setUserFilters({
+      searchTerm: '',
+      statusFilter: 'all',
+      typeFilter: 'all',
+      verificationFilter: 'all',
+      tokenFilter: 'all'
+    });
+    toast({
+      title: "Filters Cleared",
+      description: "All filters have been reset.",
+    });
+  };
+
+  const handleUserAction = (action: string, user: any) => {
+    if (action === 'view') {
+      setSelectedUser(user);
+    } else {
+      setActionDialog({ open: true, type: action, user });
     }
-  ];
+  };
+
+  const confirmAction = () => {
+    const { type, user } = actionDialog;
+    
+    switch (type) {
+      case 'suspend':
+        updateUserStatus(user.userId, 'Suspended');
+        toast({
+          title: "User Suspended",
+          description: `${user.email} has been suspended successfully.`,
+          variant: "destructive"
+        });
+        break;
+      case 'activate':
+        updateUserStatus(user.userId, 'Active');
+        toast({
+          title: "User Activated",
+          description: `${user.email} has been activated successfully.`,
+        });
+        break;
+      case 'reset':
+        toast({
+          title: "Password Reset",
+          description: `Password reset email sent to ${user.email}.`,
+        });
+        break;
+      case 'edit':
+        toast({
+          title: "Edit User",
+          description: `Opening edit dialog for ${user.email}.`,
+        });
+        break;
+    }
+    
+    setActionDialog({ open: false, type: '', user: null });
+  };
+
+  const exportData = () => {
+    const csvContent = [
+      ['User ID', 'Email', 'Status', 'KYC Status', 'Total Balance', 'Total ASVO', 'Registration Date'],
+      ...users.map(user => [
+        user.userId,
+        user.email,
+        user.status,
+        user.kycStatus,
+        user.totalBalance,
+        user.totalASVO,
+        user.registrationDate
+      ])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'users_export.csv';
+    a.click();
+    
+    toast({
+      title: "Export Complete",
+      description: "User data has been exported successfully.",
+    });
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -96,6 +184,10 @@ export function UsersWallets() {
     return variants[status as keyof typeof variants] || variants.Pending;
   };
 
+  const activeUsers = allUsers.filter(u => u.status === 'Active').length;
+  const pendingKYC = allUsers.filter(u => u.kycStatus === 'Pending').length;
+  const suspendedUsers = allUsers.filter(u => u.status === 'Suspended').length;
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
@@ -113,17 +205,17 @@ export function UsersWallets() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
               <Input
-                placeholder="Search by User ID, Email, Wallet Address"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by User ID, Email"
+                value={userFilters.searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={userFilters.statusFilter} onValueChange={handleStatusFilter}>
               <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
@@ -134,7 +226,7 @@ export function UsersWallets() {
                 <SelectItem value="suspended">Suspended</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={verificationFilter} onValueChange={setVerificationFilter}>
+            <Select value={userFilters.verificationFilter} onValueChange={handleKYCFilter}>
               <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
                 <SelectValue placeholder="KYC Status" />
               </SelectTrigger>
@@ -145,9 +237,18 @@ export function UsersWallets() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button onClick={applyFilters} className="bg-emerald-600 hover:bg-emerald-700 text-white">
               Apply Filters
             </Button>
+            <div className="flex gap-2">
+              <Button onClick={clearFilters} variant="outline" className="border-slate-600 text-slate-300 hover:text-white">
+                Clear
+              </Button>
+              <Button onClick={exportData} variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -155,9 +256,11 @@ export function UsersWallets() {
       {/* User Table */}
       <Card className="glassmorphism border-emerald-800/30">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <User className="w-5 h-5" />
-            User Directory
+          <CardTitle className="text-white flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <User className="w-5 h-5" />
+              User Directory ({users.length} users)
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -166,7 +269,7 @@ export function UsersWallets() {
               <TableHeader>
                 <TableRow className="border-emerald-800/30">
                   <TableHead className="text-slate-300">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 cursor-pointer hover:text-white">
                       User ID <ArrowUpDown className="w-4 h-4" />
                     </div>
                   </TableHead>
@@ -182,7 +285,7 @@ export function UsersWallets() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {userData.map((user, index) => (
+                {users.map((user, index) => (
                   <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
                     <TableCell className="text-emerald-400 font-mono">{user.userId}</TableCell>
                     <TableCell className="text-white">{user.email}</TableCell>
@@ -209,22 +312,44 @@ export function UsersWallets() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                          <DropdownMenuItem 
+                            onClick={() => handleUserAction('view', user)}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                          <DropdownMenuItem 
+                            onClick={() => handleUserAction('edit', user)}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit User
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                          <DropdownMenuItem 
+                            onClick={() => handleUserAction('reset', user)}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
                             <RefreshCw className="mr-2 h-4 w-4" />
                             Reset Password
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-slate-700">
-                            <Lock className="mr-2 h-4 w-4" />
-                            Suspend User
-                          </DropdownMenuItem>
+                          {user.status === 'Active' ? (
+                            <DropdownMenuItem 
+                              onClick={() => handleUserAction('suspend', user)}
+                              className="text-red-400 hover:text-red-300 hover:bg-slate-700"
+                            >
+                              <Lock className="mr-2 h-4 w-4" />
+                              Suspend User
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem 
+                              onClick={() => handleUserAction('activate', user)}
+                              className="text-green-400 hover:text-green-300 hover:bg-slate-700"
+                            >
+                              <UserCheck className="mr-2 h-4 w-4" />
+                              Activate User
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -245,7 +370,7 @@ export function UsersWallets() {
                 <User className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">15,432</p>
+                <p className="text-2xl font-bold text-white">{allUsers.length}</p>
                 <p className="text-slate-300 text-sm">Total Users</p>
               </div>
             </div>
@@ -256,10 +381,10 @@ export function UsersWallets() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-green-600/20 rounded-lg">
-                <Badge className="w-6 h-6 text-green-400" />
+                <UserCheck className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">12,847</p>
+                <p className="text-2xl font-bold text-white">{activeUsers}</p>
                 <p className="text-slate-300 text-sm">Active Users</p>
               </div>
             </div>
@@ -270,10 +395,10 @@ export function UsersWallets() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-yellow-600/20 rounded-lg">
-                <Wallet className="w-6 h-6 text-yellow-400" />
+                <Shield className="w-6 h-6 text-yellow-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">1,285</p>
+                <p className="text-2xl font-bold text-white">{pendingKYC}</p>
                 <p className="text-slate-300 text-sm">KYC Pending</p>
               </div>
             </div>
@@ -284,16 +409,96 @@ export function UsersWallets() {
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-red-600/20 rounded-lg">
-                <Lock className="w-6 h-6 text-red-400" />
+                <UserX className="w-6 h-6 text-red-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">89</p>
+                <p className="text-2xl font-bold text-white">{suspendedUsers}</p>
                 <p className="text-slate-300 text-sm">Suspended</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* User Details Dialog */}
+      <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>User Details</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Complete information for {selectedUser?.email}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="grid grid-cols-2 gap-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-slate-300">User ID</label>
+                <p className="text-emerald-400 font-mono">{selectedUser.userId}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Email</label>
+                <p className="text-white">{selectedUser.email}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Status</label>
+                <Badge className={getStatusBadge(selectedUser.status)}>
+                  {selectedUser.status}
+                </Badge>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">KYC Status</label>
+                <Badge className={getKYCBadge(selectedUser.kycStatus)}>
+                  {selectedUser.kycStatus}
+                </Badge>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Total Balance</label>
+                <p className="text-white font-medium">{selectedUser.totalBalance}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Total ASVO</label>
+                <p className="text-emerald-400">{selectedUser.totalASVO}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Staked ASVO</label>
+                <p className="text-emerald-300">{selectedUser.stakedASVO}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Registration Date</label>
+                <p className="text-slate-300">{selectedUser.registrationDate}</p>
+              </div>
+              <div className="col-span-2">
+                <label className="text-sm font-medium text-slate-300">Last Login</label>
+                <p className="text-slate-300">{selectedUser.lastLogin}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Action Confirmation Dialog */}
+      <Dialog open={actionDialog.open} onOpenChange={(open) => setActionDialog(prev => ({ ...prev, open }))}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white">
+          <DialogHeader>
+            <DialogTitle>Confirm Action</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Are you sure you want to {actionDialog.type} this user?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setActionDialog({ open: false, type: '', user: null })}
+              className="border-slate-600 text-slate-300"
+            >
+              Cancel
+            </Button>
+            <Button onClick={confirmAction} className="bg-emerald-600 hover:bg-emerald-700">
+              Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

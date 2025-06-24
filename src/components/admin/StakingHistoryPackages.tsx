@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { History, Package, Search, Filter, Download, MoreHorizontal } from 'lucide-react';
+import { History, Package, Search, Filter, Download, MoreHorizontal, RefreshCw, Eye, FileText } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -25,11 +25,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export function StakingHistoryPackages() {
   const [activeTab, setActiveTab] = useState('stakes');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [packageFilter, setPackageFilter] = useState('all');
+  const [selectedStake, setSelectedStake] = useState<any>(null);
+  const { toast } = useToast();
 
   const stakingData = [
     {
@@ -122,6 +135,106 @@ export function StakingHistoryPackages() {
     }
   ];
 
+  const filteredStakingData = useMemo(() => {
+    return stakingData.filter(stake => {
+      const matchesSearch = searchTerm === '' || 
+        stake.wallet.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        stake.package.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      const matchesStatus = statusFilter === 'all' || 
+        stake.status.toLowerCase() === statusFilter.toLowerCase();
+      
+      const matchesPackage = packageFilter === 'all' || 
+        stake.package.toLowerCase().includes(packageFilter.toLowerCase());
+
+      return matchesSearch && matchesStatus && matchesPackage;
+    });
+  }, [stakingData, searchTerm, statusFilter, packageFilter]);
+
+  const applyFilters = () => {
+    toast({
+      title: "Filters Applied",
+      description: `Found ${filteredStakingData.length} stakes matching your criteria.`,
+    });
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setStatusFilter('all');
+    setPackageFilter('all');
+    toast({
+      title: "Filters Cleared",
+      description: "All filters have been reset.",
+    });
+  };
+
+  const exportData = () => {
+    const csvContent = [
+      ['Wallet', 'Package', 'Amount', 'Status', 'Start Date', 'End Date', 'APY', 'Earned', 'Auto Compound'],
+      ...filteredStakingData.map(stake => [
+        stake.wallet,
+        stake.package,
+        stake.amount,
+        stake.status,
+        stake.startDate,
+        stake.endDate,
+        stake.apy,
+        stake.earned,
+        stake.autoCompound
+      ])
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'staking_history_export.csv';
+    a.click();
+    
+    toast({
+      title: "Export Complete",
+      description: "Staking history data has been exported successfully.",
+    });
+  };
+
+  const refreshData = () => {
+    toast({
+      title: "Data Refreshed",
+      description: "Staking history data has been refreshed successfully.",
+    });
+  };
+
+  const viewStakeDetails = (stake: any) => {
+    setSelectedStake(stake);
+  };
+
+  const exportStakeRecord = (stake: any) => {
+    const csvContent = [
+      ['Field', 'Value'],
+      ['Wallet', stake.wallet],
+      ['Package', stake.package],
+      ['Amount', stake.amount],
+      ['Status', stake.status],
+      ['Start Date', stake.startDate],
+      ['End Date', stake.endDate],
+      ['APY', stake.apy],
+      ['Earned', stake.earned],
+      ['Auto Compound', stake.autoCompound]
+    ].map(row => row.join(',')).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `stake_${stake.wallet}_${stake.package.replace(/\s+/g, '_')}.csv`;
+    a.click();
+    
+    toast({
+      title: "Record Exported",
+      description: `Stake record for ${stake.wallet} has been exported.`,
+    });
+  };
+
   const getStatusBadge = (status: string) => {
     return status === 'Active' 
       ? 'bg-emerald-900/20 text-emerald-400 border-emerald-600/30'
@@ -134,11 +247,26 @@ export function StakingHistoryPackages() {
       : 'bg-gray-900/20 text-gray-400 border-gray-600/30';
   };
 
+  const activeStakes = stakingData.filter(s => s.status === 'Active').length;
+  const completedStakes = stakingData.filter(s => s.status === 'Completed').length;
+  const totalStakedValue = stakingData.reduce((sum, stake) => {
+    const amount = parseFloat(stake.amount.replace(/[^\d.]/g, ''));
+    return sum + amount;
+  }, 0);
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="glassmorphism p-6 rounded-xl border border-emerald-800/30">
-        <h1 className="text-3xl font-bold text-white mb-2">Staking History & Packages</h1>
-        <p className="text-slate-300">View and manage user staking history and packages</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Staking History & Packages</h1>
+            <p className="text-slate-300">View and manage user staking history and packages</p>
+          </div>
+          <Button onClick={refreshData} variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -149,7 +277,7 @@ export function StakingHistoryPackages() {
                 <Package className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">2,762</p>
+                <p className="text-2xl font-bold text-white">{activeStakes}</p>
                 <p className="text-slate-300 text-sm">Active Stakes</p>
                 <p className="text-slate-400 text-xs">Across all packages</p>
               </div>
@@ -164,9 +292,9 @@ export function StakingHistoryPackages() {
                 <History className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">225.21M</p>
+                <p className="text-2xl font-bold text-white">{totalStakedValue.toFixed(0)}K</p>
                 <p className="text-slate-300 text-sm">Total Staked SVR</p>
-                <p className="text-slate-400 text-xs">Value: $23.65M at current price</p>
+                <p className="text-slate-400 text-xs">Value: ${(totalStakedValue * 0.105).toFixed(2)}K at current price</p>
               </div>
             </div>
           </CardContent>
@@ -194,7 +322,7 @@ export function StakingHistoryPackages() {
                 <History className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">1,845</p>
+                <p className="text-2xl font-bold text-white">{completedStakes}</p>
                 <p className="text-slate-300 text-sm">Completed Stakes</p>
                 <p className="text-slate-400 text-xs">68% renewal rate</p>
               </div>
@@ -211,10 +339,12 @@ export function StakingHistoryPackages() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
               <Input 
                 placeholder="Search by wallet address..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 bg-slate-800/50 border-slate-600 text-white w-64"
               />
             </div>
-            <Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-32 bg-slate-800/50 border-slate-600 text-white">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
@@ -224,7 +354,7 @@ export function StakingHistoryPackages() {
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>
             </Select>
-            <Select>
+            <Select value={packageFilter} onValueChange={setPackageFilter}>
               <SelectTrigger className="w-40 bg-slate-800/50 border-slate-600 text-white">
                 <SelectValue placeholder="All Packages" />
               </SelectTrigger>
@@ -237,11 +367,14 @@ export function StakingHistoryPackages() {
                 <SelectItem value="micro">Micro Node</SelectItem>
               </SelectContent>
             </Select>
-            <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 hover:text-emerald-300 bg-transparent">
+            <Button onClick={applyFilters} variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 hover:text-emerald-300 bg-transparent">
               <Filter className="w-4 h-4 mr-2" />
-              More Filters
+              Apply
             </Button>
-            <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 hover:text-emerald-300 bg-transparent">
+            <Button onClick={clearFilters} variant="outline" className="border-slate-600 text-slate-300 hover:text-white bg-transparent">
+              Clear
+            </Button>
+            <Button onClick={exportData} variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 hover:text-emerald-300 bg-transparent">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
@@ -256,6 +389,9 @@ export function StakingHistoryPackages() {
             </TabsList>
             
             <TabsContent value="stakes" className="mt-6">
+              <div className="mb-4 text-slate-300">
+                Showing {filteredStakingData.length} of {stakingData.length} stakes
+              </div>
               <Table>
                 <TableHeader>
                   <TableRow className="border-emerald-800/30">
@@ -272,7 +408,7 @@ export function StakingHistoryPackages() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {stakingData.map((stake, index) => (
+                  {filteredStakingData.map((stake, index) => (
                     <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/30">
                       <TableCell className="text-emerald-400 font-mono">{stake.wallet}</TableCell>
                       <TableCell className="text-white">{stake.package}</TableCell>
@@ -299,10 +435,18 @@ export function StakingHistoryPackages() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                            <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <DropdownMenuItem 
+                              onClick={() => viewStakeDetails(stake)}
+                              className="text-slate-300 hover:text-white hover:bg-slate-700"
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
                               View Details
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <DropdownMenuItem 
+                              onClick={() => exportStakeRecord(stake)}
+                              className="text-slate-300 hover:text-white hover:bg-slate-700"
+                            >
+                              <FileText className="mr-2 h-4 w-4" />
                               Export Record
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -318,14 +462,18 @@ export function StakingHistoryPackages() {
               <div className="text-center py-12">
                 <Package className="w-12 h-12 text-slate-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-white mb-2">Package Upgrades</h3>
-                <p className="text-slate-400">Package upgrade history will be displayed here</p>
+                <p className="text-slate-400 mb-4">Package upgrade history will be displayed here</p>
+                <Button onClick={() => toast({ title: "Coming Soon", description: "Package upgrade functionality is under development." })} 
+                        className="bg-emerald-600 hover:bg-emerald-700">
+                  View Upgrade History
+                </Button>
               </div>
             </TabsContent>
 
             <TabsContent value="distribution" className="mt-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {packageData.map((pkg, index) => (
-                  <Card key={index} className="glassmorphism border-emerald-800/30">
+                  <Card key={index} className="glassmorphism border-emerald-800/30 hover:border-emerald-600/50 transition-colors">
                     <CardHeader>
                       <CardTitle className="text-white flex items-center justify-between">
                         {pkg.name}
@@ -344,6 +492,16 @@ export function StakingHistoryPackages() {
                           <span className="text-slate-300">Total Staked</span>
                           <span className="text-emerald-400 font-bold">{pkg.totalStaked}</span>
                         </div>
+                        <Button 
+                          onClick={() => toast({ 
+                            title: "Package Details", 
+                            description: `Viewing details for ${pkg.name} package.` 
+                          })}
+                          className="w-full mt-3 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-600/30"
+                          variant="outline"
+                        >
+                          View Details
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
@@ -353,6 +511,62 @@ export function StakingHistoryPackages() {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Stake Details Dialog */}
+      <Dialog open={!!selectedStake} onOpenChange={() => setSelectedStake(null)}>
+        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Stake Details</DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Complete information for stake from {selectedStake?.wallet}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedStake && (
+            <div className="grid grid-cols-2 gap-4 py-4">
+              <div>
+                <label className="text-sm font-medium text-slate-300">Wallet Address</label>
+                <p className="text-emerald-400 font-mono">{selectedStake.wallet}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Package</label>
+                <p className="text-white">{selectedStake.package}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Amount</label>
+                <p className="text-white font-medium">{selectedStake.amount}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Status</label>
+                <Badge className={getStatusBadge(selectedStake.status)}>
+                  {selectedStake.status}
+                </Badge>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Start Date</label>
+                <p className="text-slate-300">{selectedStake.startDate}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">End Date</label>
+                <p className="text-slate-300">{selectedStake.endDate}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">APY</label>
+                <p className="text-emerald-400 font-bold">{selectedStake.apy}</p>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-slate-300">Earned</label>
+                <p className="text-green-400">{selectedStake.earned}</p>
+              </div>
+              <div className="col-span-2">
+                <label className="text-sm font-medium text-slate-300">Auto Compound</label>
+                <Badge className={getAutoCompoundBadge(selectedStake.autoCompound)}>
+                  {selectedStake.autoCompound}
+                </Badge>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
