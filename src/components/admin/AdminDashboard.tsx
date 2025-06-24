@@ -131,7 +131,7 @@ export function AdminDashboard() {
               <div className="flex items-center space-x-2">
                 {kpi.change && (
                   <div className={`flex items-center text-xs ${
-                    kpi.trend === 'up' ? 'text-green-400' : 
+                    kpi.trend === 'up' ? 'text-emerald-400' : 
                     kpi.trend === 'down' ? 'text-red-400' : 'text-slate-400'
                   }`}>
                     {kpi.trend === 'up' ? <TrendingUp className="w-3 h-3 mr-1" /> :
@@ -143,7 +143,7 @@ export function AdminDashboard() {
               </div>
               {kpi.title.includes('ICO') && kpi.title.includes('Sold') && (
                 <div className="mt-2">
-                  <div className="w-full bg-slate-700 rounded-full h-2">
+                  <div className="w-full bg-slate-700/50 rounded-full h-2">
                     <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-2 rounded-full" style={{width: '13.5%'}}></div>
                   </div>
                   <span className="text-xs text-slate-400 mt-1">13.5% Complete</span>
@@ -158,7 +158,7 @@ export function AdminDashboard() {
       <Card className="glassmorphism border-emerald-800/30">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl text-white">Recent System Activity</CardTitle>
-          <Button variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
+          <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 hover:text-emerald-300 bg-transparent">
             View All System Logs
           </Button>
         </CardHeader>
@@ -174,7 +174,7 @@ export function AdminDashboard() {
             </TableHeader>
             <TableBody>
               {recentActivity.map((activity, index) => (
-                <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
+                <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/30">
                   <TableCell className="text-slate-300">{activity.timestamp}</TableCell>
                   <TableCell className="text-white">{activity.action}</TableCell>
                   <TableCell className="text-emerald-400">{activity.entity}</TableCell>
@@ -193,35 +193,35 @@ export function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/50">
-              <CheckCircle className="w-5 h-5 text-green-400" />
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20">
+              <CheckCircle className="w-5 h-5 text-emerald-400" />
               <div>
                 <p className="text-white font-medium">API Status</p>
-                <p className="text-green-400 text-sm">Online</p>
+                <p className="text-emerald-400 text-sm">Online</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/50">
-              <CheckCircle className="w-5 h-5 text-green-400" />
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20">
+              <CheckCircle className="w-5 h-5 text-emerald-400" />
               <div>
                 <p className="text-white font-medium">Blockchain Sync</p>
-                <p className="text-green-400 text-sm">Synced</p>
+                <p className="text-emerald-400 text-sm">Synced</p>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/50">
-              <CheckCircle className="w-5 h-5 text-green-400" />
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-slate-800/30 border border-emerald-800/20">
+              <CheckCircle className="w-5 h-5 text-emerald-400" />
               <div>
                 <p className="text-white font-medium">Database Status</p>
-                <p className="text-green-400 text-sm">OK</p>
+                <p className="text-emerald-400 text-sm">OK</p>
               </div>
             </div>
           </div>
           
           <div className="space-y-2">
             <h4 className="text-white font-medium">Recent Alerts</h4>
-            <div className="flex items-center space-x-3 p-3 rounded-lg bg-yellow-900/20 border border-yellow-600/30">
-              <AlertCircle className="w-5 h-5 text-yellow-400" />
-              <span className="text-yellow-300">High number of failed deposit attempts detected</span>
-              <Badge variant="outline" className="ml-auto border-yellow-600 text-yellow-400">
+            <div className="flex items-center space-x-3 p-3 rounded-lg bg-emerald-900/10 border border-emerald-600/30 backdrop-blur-sm">
+              <AlertCircle className="w-5 h-5 text-emerald-400" />
+              <span className="text-emerald-300">High number of failed deposit attempts detected</span>
+              <Badge variant="outline" className="ml-auto border-emerald-600/50 text-emerald-400 bg-transparent">
                 2 hours ago
               </Badge>
             </div>

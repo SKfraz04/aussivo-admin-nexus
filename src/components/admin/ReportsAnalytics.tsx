@@ -28,8 +28,8 @@ export function ReportsAnalytics() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-600/20 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-400" />
+              <div className="p-2 bg-emerald-600/20 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">+12.5%</p>
@@ -42,8 +42,8 @@ export function ReportsAnalytics() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-600/20 rounded-lg">
-                <BarChart className="w-6 h-6 text-blue-400" />
+              <div className="p-2 bg-emerald-600/20 rounded-lg">
+                <BarChart className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">15,432</p>
@@ -56,8 +56,8 @@ export function ReportsAnalytics() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardContent className="p-6">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-600/20 rounded-lg">
-                <PieChart className="w-6 h-6 text-purple-400" />
+              <div className="p-2 bg-emerald-600/20 rounded-lg">
+                <PieChart className="w-6 h-6 text-emerald-400" />
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">89.2%</p>
@@ -72,7 +72,7 @@ export function ReportsAnalytics() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <BarChart className="w-5 h-5" />
+              <BarChart className="w-5 h-5 text-emerald-400" />
               Performance Metrics
             </CardTitle>
           </CardHeader>
@@ -101,7 +101,7 @@ export function ReportsAnalytics() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <PieChart className="w-5 h-5" />
+              <PieChart className="w-5 h-5 text-emerald-400" />
               Revenue Breakdown
             </CardTitle>
           </CardHeader>

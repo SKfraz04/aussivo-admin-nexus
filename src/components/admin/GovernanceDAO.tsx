@@ -16,28 +16,28 @@ export function GovernanceDAO() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Vote className="w-5 h-5" />
+              <Vote className="w-5 h-5 text-emerald-400" />
               Active Proposals
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-3">
-              <div className="p-4 bg-slate-800/30 rounded-lg">
+              <div className="p-4 bg-slate-800/30 rounded-lg border border-emerald-800/20">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-white font-medium">Proposal #001</h3>
-                  <Badge className="bg-yellow-900/20 text-yellow-400">Voting</Badge>
+                  <Badge className="bg-emerald-900/20 text-emerald-400 border-emerald-600/30">Voting</Badge>
                 </div>
                 <p className="text-slate-400 text-sm mb-3">Increase staking rewards by 2%</p>
                 <div className="flex items-center gap-4 text-sm">
-                  <span className="text-green-400">For: 1,250</span>
-                  <span className="text-red-400">Against: 340</span>
+                  <span className="text-emerald-400">For: 1,250</span>
+                  <span className="text-slate-400">Against: 340</span>
                   <span className="text-slate-400">Ends in 3 days</span>
                 </div>
               </div>
-              <div className="p-4 bg-slate-800/30 rounded-lg">
+              <div className="p-4 bg-slate-800/30 rounded-lg border border-emerald-800/20">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-white font-medium">Proposal #002</h3>
-                  <Badge className="bg-blue-900/20 text-blue-400">Draft</Badge>
+                  <Badge className="bg-slate-700/50 text-slate-400 border-slate-600/30">Draft</Badge>
                 </div>
                 <p className="text-slate-400 text-sm mb-3">Add new staking package tier</p>
                 <div className="flex items-center gap-4 text-sm">
@@ -51,18 +51,18 @@ export function GovernanceDAO() {
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Shield className="w-5 h-5" />
+              <Shield className="w-5 h-5 text-emerald-400" />
               Governance Stats
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-3 bg-slate-800/30 rounded-lg">
+              <div className="text-center p-3 bg-slate-800/30 rounded-lg border border-emerald-800/20">
                 <Users className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">1,847</p>
                 <p className="text-slate-400 text-sm">Total Voters</p>
               </div>
-              <div className="text-center p-3 bg-slate-800/30 rounded-lg">
+              <div className="text-center p-3 bg-slate-800/30 rounded-lg border border-emerald-800/20">
                 <Clock className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
                 <p className="text-2xl font-bold text-white">72h</p>
                 <p className="text-slate-400 text-sm">Avg Vote Time</p>
