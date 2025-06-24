@@ -125,7 +125,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
 
   return (
     <>
-      <Sidebar className="border-r border-emerald-800/30 animate-fade-in h-screen flex flex-col">
+      <Sidebar className="border-r border-emerald-800/30 animate-fade-in fixed left-0 top-0 h-screen flex flex-col z-50">
         <SidebarHeader className="p-6 border-b border-emerald-800/30 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-center animate-scale-in">
