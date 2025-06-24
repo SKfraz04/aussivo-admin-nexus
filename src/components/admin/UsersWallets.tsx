@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +12,8 @@ import {
   Lock,
   User,
   Wallet,
-  ArrowUpDown
+  ArrowUpDown,
+  MoreHorizontal
 } from 'lucide-react';
 import {
   Table,
@@ -30,6 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function UsersWallets() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -196,20 +202,31 @@ export function UsersWallets() {
                     <TableCell className="text-slate-300">{user.registrationDate}</TableCell>
                     <TableCell className="text-slate-300">{user.lastLogin}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white">
-                          <RefreshCw className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
-                          <Lock className="w-4 h-4" />
-                        </Button>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit User
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Reset Password
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-slate-700">
+                            <Lock className="mr-2 h-4 w-4" />
+                            Suspend User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

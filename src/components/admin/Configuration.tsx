@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,8 @@ import {
   Edit, 
   Plus,
   ToggleLeft,
-  ToggleRight
+  ToggleRight,
+  MoreHorizontal
 } from 'lucide-react';
 import {
   Table,
@@ -31,6 +31,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Configuration() {
   const [activeTab, setActiveTab] = useState('token-packages');
@@ -181,14 +187,32 @@ export function Configuration() {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white">
-                                {stage.status === 'Active' ? <ToggleLeft className="w-4 h-4" /> : <ToggleRight className="w-4 h-4" />}
-                              </Button>
-                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit Stage
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  {stage.status === 'Active' ? (
+                                    <>
+                                      <ToggleLeft className="mr-2 h-4 w-4" />
+                                      Deactivate
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ToggleRight className="mr-2 h-4 w-4" />
+                                      Activate
+                                    </>
+                                  )}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -231,14 +255,32 @@ export function Configuration() {
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                              <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white">
-                                {pkg.status === 'Active' ? <ToggleLeft className="w-4 h-4" /> : <ToggleRight className="w-4 h-4" />}
-                              </Button>
-                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit Package
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  {pkg.status === 'Active' ? (
+                                    <>
+                                      <ToggleLeft className="mr-2 h-4 w-4" />
+                                      Deactivate
+                                    </>
+                                  ) : (
+                                    <>
+                                      <ToggleRight className="mr-2 h-4 w-4" />
+                                      Activate
+                                    </>
+                                  )}
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </TableCell>
                         </TableRow>
                       ))}

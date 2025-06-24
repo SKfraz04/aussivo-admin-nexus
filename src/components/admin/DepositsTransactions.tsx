@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,8 @@ import {
   Eye,
   CreditCard,
   ArrowUpDown,
-  Clock
+  Clock,
+  MoreHorizontal
 } from 'lucide-react';
 import {
   Table,
@@ -29,6 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function DepositsTransactions() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -290,21 +296,31 @@ export function DepositsTransactions() {
                     </TableCell>
                     <TableCell className="text-slate-300">{tx.timestamp}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        {tx.status === 'Pending' && (
-                          <>
-                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                              <CheckCircle className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
-                              <XCircle className="w-4 h-4" />
-                            </Button>
-                          </>
-                        )}
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          {tx.status === 'Pending' && (
+                            <>
+                              <DropdownMenuItem className="text-green-400 hover:text-green-300 hover:bg-slate-700">
+                                <CheckCircle className="mr-2 h-4 w-4" />
+                                {tx.type === 'Deposit' ? 'Confirm' : 'Approve'}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-slate-700">
+                                <XCircle className="mr-2 h-4 w-4" />
+                                Reject
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

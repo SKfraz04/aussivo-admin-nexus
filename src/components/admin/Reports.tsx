@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,9 @@ import {
   Users,
   Target,
   TrendingUp,
-  DollarSign
+  DollarSign,
+  MoreHorizontal,
+  Eye
 } from 'lucide-react';
 import {
   Table,
@@ -29,6 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Reports() {
   const [activeTab, setActiveTab] = useState('staking-reports');
@@ -270,12 +277,13 @@ export function Reports() {
                         <TableHead className="text-slate-300">Earned</TableHead>
                         <TableHead className="text-slate-300">Claimed</TableHead>
                         <TableHead className="text-slate-300">Status</TableHead>
+                        <TableHead className="text-slate-300">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {stakingHistoryData.map((stake, index) => (
                         <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
-                          <TableCell className="text-emerald-400">{stake.userId}</TableCell>
+                          <TableCell className="text-emerald-400 font-mono">{stake.userId}</TableCell>
                           <TableCell className="text-white">{stake.packageName}</TableCell>
                           <TableCell className="text-white font-medium">{stake.stakedAmount}</TableCell>
                           <TableCell className="text-slate-300">{stake.startDate} - {stake.endDate}</TableCell>
@@ -287,6 +295,25 @@ export function Reports() {
                               {stake.status}
                             </Badge>
                           </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View Details
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Export Record
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -294,30 +321,50 @@ export function Reports() {
                 </CardContent>
               </Card>
 
-              {/* Package Performance Data */}
+              {/* Package Performance Summary */}
               <Card className="glassmorphism border-emerald-800/30">
                 <CardHeader>
-                  <CardTitle className="text-white">Package Performance Overview</CardTitle>
+                  <CardTitle className="text-white">Package Performance Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Table>
                     <TableHeader>
                       <TableRow className="border-emerald-800/30">
-                        <TableHead className="text-slate-300">Package Name</TableHead>
+                        <TableHead className="text-slate-300">Package</TableHead>
                         <TableHead className="text-slate-300">Total Staked</TableHead>
-                        <TableHead className="text-slate-300">Number of Stakers</TableHead>
-                        <TableHead className="text-slate-300">Average APY</TableHead>
-                        <TableHead className="text-slate-300">Total Rewards Distributed</TableHead>
+                        <TableHead className="text-slate-300">Stakers</TableHead>
+                        <TableHead className="text-slate-300">Avg APY</TableHead>
+                        <TableHead className="text-slate-300">Total Rewards</TableHead>
+                        <TableHead className="text-slate-300">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {packagePerformanceData.map((pkg, index) => (
                         <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
                           <TableCell className="text-white font-medium">{pkg.packageName}</TableCell>
-                          <TableCell className="text-emerald-400 font-bold">{pkg.totalStaked}</TableCell>
-                          <TableCell className="text-white">{pkg.numStakers.toLocaleString()}</TableCell>
-                          <TableCell className="text-green-400 font-bold">{pkg.avgAPY}</TableCell>
-                          <TableCell className="text-blue-400">{pkg.totalRewards}</TableCell>
+                          <TableCell className="text-emerald-400">{pkg.totalStaked}</TableCell>
+                          <TableCell className="text-white">{pkg.numStakers}</TableCell>
+                          <TableCell className="text-emerald-400 font-bold">{pkg.avgAPY}</TableCell>
+                          <TableCell className="text-green-400">{pkg.totalRewards}</TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Eye className="mr-2 h-4 w-4" />
+                                  View Analysis
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Export Data
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -327,7 +374,7 @@ export function Reports() {
             </div>
           )}
 
-          {/* General Reports & Analytics */}
+          {/* General Analytics */}
           {activeTab === 'general-analytics' && (
             <div className="space-y-6">
               {/* Pre-defined Reports */}
@@ -338,20 +385,37 @@ export function Reports() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {predefinedReports.map((report, index) => (
-                      <div key={index} className="p-4 bg-slate-800/50 rounded-lg border border-slate-600/30 hover:border-emerald-600/50 transition-colors">
+                      <div key={index} className="p-4 bg-slate-800/50 rounded-lg border border-slate-700/50 hover:border-emerald-600/50 transition-colors">
                         <div className="flex items-start justify-between">
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-center space-x-3">
                             <div className="p-2 bg-emerald-600/20 rounded-lg">
                               <report.icon className="w-5 h-5 text-emerald-400" />
                             </div>
                             <div>
                               <h4 className="text-white font-medium">{report.title}</h4>
-                              <p className="text-slate-400 text-sm">{report.description}</p>
+                              <p className="text-slate-400 text-sm mt-1">{report.description}</p>
+                              <Badge className="mt-2 bg-blue-900/20 text-blue-400 border-blue-600/30">
+                                {report.format}
+                              </Badge>
                             </div>
                           </div>
-                          <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                            <Download className="w-4 h-4" />
-                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                              <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                <Download className="mr-2 h-4 w-4" />
+                                Generate Report
+                              </DropdownMenuItem>
+                              <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                <Calendar className="mr-2 h-4 w-4" />
+                                Schedule
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </div>
                     ))}
@@ -374,7 +438,6 @@ export function Reports() {
                         </SelectTrigger>
                         <SelectContent className="bg-slate-800 border-slate-600">
                           <SelectItem value="users">Users</SelectItem>
-                          <SelectItem value="wallets">Wallets</SelectItem>
                           <SelectItem value="transactions">Transactions</SelectItem>
                           <SelectItem value="staking">Staking</SelectItem>
                           <SelectItem value="referrals">Referrals</SelectItem>
@@ -407,44 +470,11 @@ export function Reports() {
                     </div>
                   </div>
                   <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white">
-                    <FileText className="w-4 h-4 mr-2" />
+                    <Download className="w-4 h-4 mr-2" />
                     Generate Custom Report
                   </Button>
                 </CardContent>
               </Card>
-
-              {/* Analytics Visualizations */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="glassmorphism border-emerald-800/30">
-                  <CardHeader>
-                    <CardTitle className="text-white">User Growth Trend</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 bg-slate-800/30 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <BarChart3 className="w-12 h-12 text-emerald-400 mx-auto mb-2" />
-                        <p className="text-slate-400">Chart visualization would display here</p>
-                        <p className="text-slate-500 text-sm">Total Users Growth (Line Chart)</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="glassmorphism border-emerald-800/30">
-                  <CardHeader>
-                    <CardTitle className="text-white">Transaction Volume</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 bg-slate-800/30 rounded-lg flex items-center justify-center">
-                      <div className="text-center">
-                        <TrendingUp className="w-12 h-12 text-blue-400 mx-auto mb-2" />
-                        <p className="text-slate-400">Chart visualization would display here</p>
-                        <p className="text-slate-500 text-sm">Daily Transaction Volume (Bar Chart)</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
             </div>
           )}
         </div>
