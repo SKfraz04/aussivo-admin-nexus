@@ -11,6 +11,7 @@ import { GovernanceDAO } from '../components/admin/GovernanceDAO';
 import { RewardsBurnControl } from '../components/admin/RewardsBurnControl';
 import { StakingHistoryPackages } from '../components/admin/StakingHistoryPackages';
 import { ReportsAnalytics } from '../components/admin/ReportsAnalytics';
+import AdminHeader from '../components/admin/AdminHeader';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export type AdminSection = 
@@ -57,16 +58,19 @@ const AdminPanel = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-black">
-        <AdminSidebar 
-          activeSection={activeSection} 
-          setActiveSection={setActiveSection} 
-        />
-        <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black">
-          <div className="max-w-7xl mx-auto">
-            {renderActiveSection()}
-          </div>
-        </main>
+      <div className="min-h-screen flex flex-col w-full bg-black">
+        <AdminHeader />
+        <div className="flex flex-1">
+          <AdminSidebar 
+            activeSection={activeSection} 
+            setActiveSection={setActiveSection} 
+          />
+          <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black">
+            <div className="max-w-7xl mx-auto">
+              {renderActiveSection()}
+            </div>
+          </main>
+        </div>
       </div>
     </SidebarProvider>
   );
