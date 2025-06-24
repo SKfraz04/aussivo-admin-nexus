@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import {
   BarChart3,
@@ -128,52 +127,50 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
       <Sidebar className="border-r border-emerald-800/30 animate-fade-in">
         <SidebarHeader className="p-6 border-b border-emerald-800/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3 animate-scale-in">
+            <div className="flex items-center justify-center animate-scale-in">
               <img 
                 src="/lovable-uploads/863393d5-f183-46fd-86a2-acfe7e84cacd.png" 
                 alt="Aussivo Logo" 
-                className="h-8 w-auto transition-transform duration-300 hover:scale-110"
+                className="h-10 w-auto transition-transform duration-300 hover:scale-110"
               />
-              <div>
-                <h2 className="text-lg font-bold text-white">Aussivo</h2>
-                <p className="text-xs text-emerald-300">Admin Panel</p>
-              </div>
             </div>
             <SidebarTrigger className="text-emerald-300 hover:text-white transition-colors duration-200" />
           </div>
         </SidebarHeader>
-        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm">
-          {menuGroups.map((group, groupIndex) => (
-            <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
-              <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
-                {group.title}
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {group.items.map((item, itemIndex) => (
-                    <SidebarMenuItem key={item.section} className="animate-fade-in" style={{ animationDelay: `${(groupIndex * 100) + (itemIndex * 50)}ms` }}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={activeSection === item.section}
-                        className={`
-                          w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-300
-                          ${activeSection === item.section 
-                            ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg transform scale-105' 
-                            : 'text-slate-300 hover:text-white hover:bg-slate-800/50 hover:translate-x-1'
-                          }
-                        `}
-                      >
-                        <button onClick={() => setActiveSection(item.section)}>
-                          <item.icon className="w-5 h-5 transition-transform duration-200" />
-                          <span className="font-medium">{item.title}</span>
-                        </button>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
+        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm overflow-hidden">
+          <div className="h-full overflow-hidden">
+            {menuGroups.map((group, groupIndex) => (
+              <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
+                <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
+                  {group.title}
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item, itemIndex) => (
+                      <SidebarMenuItem key={item.section} className="animate-fade-in" style={{ animationDelay: `${(groupIndex * 100) + (itemIndex * 50)}ms` }}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={activeSection === item.section}
+                          className={`
+                            w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-300
+                            ${activeSection === item.section 
+                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg transform scale-105' 
+                              : 'text-slate-300 hover:text-white hover:bg-slate-800/50 hover:translate-x-1'
+                            }
+                          `}
+                        >
+                          <button onClick={() => setActiveSection(item.section)}>
+                            <item.icon className="w-5 h-5 transition-transform duration-200" />
+                            <span className="font-medium">{item.title}</span>
+                          </button>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
+          </div>
         </SidebarContent>
         <SidebarFooter className="p-4 border-t border-emerald-800/30">
           <div className="glassmorphism rounded-lg p-3 mb-3 animate-fade-in">
