@@ -41,12 +41,12 @@ const AdminPanel = () => {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-slate-950 via-emerald-950/20 to-slate-900">
+      <div className="min-h-screen flex w-full bg-black">
         <AdminSidebar 
           activeSection={activeSection} 
           setActiveSection={setActiveSection} 
         />
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black">
           <div className="max-w-7xl mx-auto">
             {renderActiveSection()}
           </div>
