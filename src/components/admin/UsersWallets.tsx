@@ -4,21 +4,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Search, 
   Filter, 
-  Eye, 
-  Edit, 
-  RefreshCw, 
-  Lock,
-  User,
-  Wallet,
-  ArrowUpDown,
-  MoreHorizontal,
+  MoreHorizontal, 
+  UserCheck, 
+  UserX, 
+  Shield,
   Download,
-  UserCheck,
-  UserX,
-  Shield
+  Plus,
+  Eye
 } from 'lucide-react';
 import {
   Table,
@@ -35,323 +31,234 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useToast } from '@/hooks/use-toast';
 
 export function UsersWallets() {
-  const { users, userFilters, setUserFilters, updateUserStatus, allUsers } = useAdminData();
+  const { users, userFilters, setUserFilters, updateUserStatus } = useAdminData();
   const { toast } = useToast();
-  const [selectedUser, setSelectedUser] = useState<any>(null);
-  const [actionDialog, setActionDialog] = useState<{ open: boolean; type: string; user: any }>({
-    open: false,
-    type: '',
-    user: null
-  });
 
-  const handleSearch = (value: string) => {
-    setUserFilters(prev => ({ ...prev, searchTerm: value }));
-  };
-
-  const handleStatusFilter = (value: string) => {
-    setUserFilters(prev => ({ ...prev, statusFilter: value }));
-  };
-
-  const handleKYCFilter = (value: string) => {
-    setUserFilters(prev => ({ ...prev, verificationFilter: value }));
-  };
-
-  const applyFilters = () => {
+  const handleStatusUpdate = (userId: string, newStatus: 'Active' | 'Suspended' | 'Inactive') => {
+    updateUserStatus(userId, newStatus);
     toast({
-      title: "Filters Applied",
-      description: `Found ${users.length} users matching your criteria.`,
-    });
-  };
-
-  const clearFilters = () => {
-    setUserFilters({
-      searchTerm: '',
-      statusFilter: 'all',
-      typeFilter: 'all',
-      verificationFilter: 'all',
-      tokenFilter: 'all'
-    });
-    toast({
-      title: "Filters Cleared",
-      description: "All filters have been reset.",
-    });
-  };
-
-  const handleUserAction = (action: string, user: any) => {
-    if (action === 'view') {
-      setSelectedUser(user);
-    } else {
-      setActionDialog({ open: true, type: action, user });
-    }
-  };
-
-  const confirmAction = () => {
-    const { type, user } = actionDialog;
-    
-    switch (type) {
-      case 'suspend':
-        updateUserStatus(user.userId, 'Suspended');
-        toast({
-          title: "User Suspended",
-          description: `${user.email} has been suspended successfully.`,
-          variant: "destructive"
-        });
-        break;
-      case 'activate':
-        updateUserStatus(user.userId, 'Active');
-        toast({
-          title: "User Activated",
-          description: `${user.email} has been activated successfully.`,
-        });
-        break;
-      case 'reset':
-        toast({
-          title: "Password Reset",
-          description: `Password reset email sent to ${user.email}.`,
-        });
-        break;
-      case 'edit':
-        toast({
-          title: "Edit User",
-          description: `Opening edit dialog for ${user.email}.`,
-        });
-        break;
-    }
-    
-    setActionDialog({ open: false, type: '', user: null });
-  };
-
-  const exportData = () => {
-    const csvContent = [
-      ['User ID', 'Email', 'Status', 'KYC Status', 'Total Balance', 'Total ASVO', 'Registration Date'],
-      ...users.map(user => [
-        user.userId,
-        user.email,
-        user.status,
-        user.kycStatus,
-        user.totalBalance,
-        user.totalASVO,
-        user.registrationDate
-      ])
-    ].map(row => row.join(',')).join('\n');
-    
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'users_export.csv';
-    a.click();
-    
-    toast({
-      title: "Export Complete",
-      description: "User data has been exported successfully.",
+      title: "Status Updated",
+      description: `User status has been changed to ${newStatus}.`,
     });
   };
 
   const getStatusBadge = (status: string) => {
-    const variants = {
-      'Active': 'bg-green-900/20 text-green-400 border-green-600/30',
-      'Suspended': 'bg-red-900/20 text-red-400 border-red-600/30',
-      'Inactive': 'bg-yellow-900/20 text-yellow-400 border-yellow-600/30'
+    const statusConfig = {
+      'Active': 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50',
+      'Suspended': 'bg-red-600/20 text-red-400 border-red-600/50',
+      'Inactive': 'bg-slate-600/20 text-slate-400 border-slate-600/50'
     };
-    return variants[status as keyof typeof variants] || variants.Inactive;
+    return statusConfig[status as keyof typeof statusConfig] || statusConfig.Inactive;
   };
 
-  const getKYCBadge = (status: string) => {
-    const variants = {
-      'Verified': 'bg-green-900/20 text-green-400 border-green-600/30',
-      'Pending': 'bg-yellow-900/20 text-yellow-400 border-yellow-600/30',
-      'Rejected': 'bg-red-900/20 text-red-400 border-red-600/30'
+  const getKycBadge = (status: string) => {
+    const kycConfig = {
+      'Verified': 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50',
+      'Pending': 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50',
+      'Rejected': 'bg-red-600/20 text-red-400 border-red-600/50'
     };
-    return variants[status as keyof typeof variants] || variants.Pending;
+    return kycConfig[status as keyof typeof kycConfig] || kycConfig.Pending;
   };
-
-  const activeUsers = allUsers.filter(u => u.status === 'Active').length;
-  const pendingKYC = allUsers.filter(u => u.kycStatus === 'Pending').length;
-  const suspendedUsers = allUsers.filter(u => u.status === 'Suspended').length;
 
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
-      <div className="glassmorphism p-6 rounded-xl border border-emerald-800/30">
-        <h1 className="text-3xl font-bold text-white mb-2">User & Wallet Management</h1>
-        <p className="text-slate-300">Manage user accounts, view wallet balances, and track user-specific activities.</p>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white">Users & Wallets</h1>
+          <p className="text-slate-400">Manage user accounts, wallets, and verification status</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
+            <Download className="h-4 w-4 mr-2" />
+            Export
+          </Button>
+          <Button className="bg-emerald-600 hover:bg-emerald-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Add User
+          </Button>
+        </div>
       </div>
 
-      {/* Search & Filters */}
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="glassmorphism border-emerald-800/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-slate-300 text-sm">Total Users</p>
+              </div>
+              <UserCheck className="h-5 w-5 text-emerald-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glassmorphism border-emerald-800/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">{users.filter(u => u.status === 'Active').length}</p>
+                <p className="text-slate-300 text-sm">Active Users</p>
+              </div>
+              <UserCheck className="h-5 w-5 text-emerald-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glassmorphism border-emerald-800/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">{users.filter(u => u.kycStatus === 'Verified').length}</p>
+                <p className="text-slate-300 text-sm">KYC Verified</p>
+              </div>
+              <Shield className="h-5 w-5 text-emerald-400" />
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="glassmorphism border-emerald-800/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">{users.filter(u => u.status === 'Suspended').length}</p>
+                <p className="text-slate-300 text-sm">Suspended</p>
+              </div>
+              <UserX className="h-5 w-5 text-red-400" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters and Search */}
       <Card className="glassmorphism border-emerald-800/30">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <Filter className="w-5 h-5" />
-            Search & Filter Users
-          </CardTitle>
+          <CardTitle className="text-white">User Management</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search by User ID, Email"
-                value={userFilters.searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-400"
-              />
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-2 flex-1">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Input
+                  placeholder="Search users..."
+                  value={userFilters.searchTerm}
+                  onChange={(e) => setUserFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+                  className="pl-9 bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
+                />
+              </div>
             </div>
-            <Select value={userFilters.statusFilter} onValueChange={handleStatusFilter}>
-              <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
-                <SelectValue placeholder="Filter by Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-600">
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-                <SelectItem value="suspended">Suspended</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={userFilters.verificationFilter} onValueChange={handleKYCFilter}>
-              <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
-                <SelectValue placeholder="KYC Status" />
-              </SelectTrigger>
-              <SelectContent className="bg-slate-800 border-slate-600">
-                <SelectItem value="all">All KYC Status</SelectItem>
-                <SelectItem value="verified">Verified</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={applyFilters} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-              Apply Filters
-            </Button>
-            <div className="flex gap-2">
-              <Button onClick={clearFilters} variant="outline" className="border-slate-600 text-slate-300 hover:text-white">
-                Clear
-              </Button>
-              <Button onClick={exportData} variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
-                <Download className="w-4 h-4 mr-2" />
-                Export
+            
+            <div className="flex items-center gap-2">
+              <Select value={userFilters.statusFilter} onValueChange={(value) => setUserFilters(prev => ({ ...prev, statusFilter: value }))}>
+                <SelectTrigger className="w-32 bg-slate-800/50 border-emerald-800/30 text-white">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-emerald-800/30">
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="suspended">Suspended</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={userFilters.verificationFilter} onValueChange={(value) => setUserFilters(prev => ({ ...prev, verificationFilter: value }))}>
+                <SelectTrigger className="w-32 bg-slate-800/50 border-emerald-800/30 text-white">
+                  <SelectValue placeholder="KYC" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-800 border-emerald-800/30">
+                  <SelectItem value="all">All KYC</SelectItem>
+                  <SelectItem value="verified">Verified</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Button variant="outline" size="sm" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* User Table */}
+      {/* Users Table */}
       <Card className="glassmorphism border-emerald-800/30">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              User Directory ({users.length} users)
-            </div>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
+        <CardContent className="p-0">
+          <div className="overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="border-emerald-800/30">
-                  <TableHead className="text-slate-300">
-                    <div className="flex items-center gap-2 cursor-pointer hover:text-white">
-                      User ID <ArrowUpDown className="w-4 h-4" />
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-slate-300">Email</TableHead>
-                  <TableHead className="text-slate-300">Total Balance</TableHead>
-                  <TableHead className="text-slate-300">Total ASVO</TableHead>
-                  <TableHead className="text-slate-300">Staked ASVO</TableHead>
-                  <TableHead className="text-slate-300">Status</TableHead>
-                  <TableHead className="text-slate-300">KYC Status</TableHead>
-                  <TableHead className="text-slate-300">Registration</TableHead>
-                  <TableHead className="text-slate-300">Last Login</TableHead>
-                  <TableHead className="text-slate-300">Actions</TableHead>
+                <TableRow className="border-emerald-800/30 bg-slate-800/30">
+                  <TableHead className="text-slate-300 font-semibold">User</TableHead>
+                  <TableHead className="text-slate-300 font-semibold">Balances</TableHead>
+                  <TableHead className="text-slate-300 font-semibold">Status</TableHead>
+                  <TableHead className="text-slate-300 font-semibold">KYC</TableHead>
+                  <TableHead className="text-slate-300 font-semibold">Last Login</TableHead>
+                  <TableHead className="text-slate-300 font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.map((user, index) => (
-                  <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
-                    <TableCell className="text-emerald-400 font-mono">{user.userId}</TableCell>
-                    <TableCell className="text-white">{user.email}</TableCell>
-                    <TableCell className="text-white font-medium">{user.totalBalance}</TableCell>
-                    <TableCell className="text-emerald-400">{user.totalASVO}</TableCell>
-                    <TableCell className="text-emerald-300">{user.stakedASVO}</TableCell>
+                {users.map((user) => (
+                  <TableRow key={user.userId} className="border-emerald-800/20 hover:bg-slate-800/30 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center space-x-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback className="bg-emerald-600/20 text-emerald-400 text-xs">
+                            {user.email.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-white font-medium">{user.userId}</p>
+                          <p className="text-slate-400 text-sm">{user.email}</p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div>
+                        <p className="text-white font-medium">{user.totalBalance}</p>
+                        <p className="text-emerald-400 text-sm">{user.totalASVO}</p>
+                        <p className="text-slate-400 text-xs">Staked: {user.stakedASVO}</p>
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge className={getStatusBadge(user.status)}>
                         {user.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getKYCBadge(user.kycStatus)}>
+                      <Badge className={getKycBadge(user.kycStatus)}>
                         {user.kycStatus}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-slate-300">{user.registrationDate}</TableCell>
-                    <TableCell className="text-slate-300">{user.lastLogin}</TableCell>
+                    <TableCell className="text-slate-300 font-mono text-sm">
+                      {user.lastLogin}
+                    </TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction('view', user)}
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                          >
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction('edit', user)}
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                          >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => handleUserAction('reset', user)}
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                          >
-                            <RefreshCw className="mr-2 h-4 w-4" />
-                            Reset Password
-                          </DropdownMenuItem>
-                          {user.status === 'Active' ? (
-                            <DropdownMenuItem 
-                              onClick={() => handleUserAction('suspend', user)}
-                              className="text-red-400 hover:text-red-300 hover:bg-slate-700"
-                            >
-                              <Lock className="mr-2 h-4 w-4" />
-                              Suspend User
-                            </DropdownMenuItem>
-                          ) : (
-                            <DropdownMenuItem 
-                              onClick={() => handleUserAction('activate', user)}
-                              className="text-green-400 hover:text-green-300 hover:bg-slate-700"
-                            >
-                              <UserCheck className="mr-2 h-4 w-4" />
-                              Activate User
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="text-slate-400 hover:text-white"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Select onValueChange={(value) => handleStatusUpdate(user.userId, value as any)}>
+                          <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-slate-700">
+                            <MoreHorizontal className="h-4 w-4 text-slate-400" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-emerald-800/30">
+                            <SelectItem value="Active">Set Active</SelectItem>
+                            <SelectItem value="Suspended">Suspend User</SelectItem>
+                            <SelectItem value="Inactive">Set Inactive</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -360,145 +267,6 @@ export function UsersWallets() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-emerald-600/20 rounded-lg">
-                <User className="w-6 h-6 text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{allUsers.length}</p>
-                <p className="text-slate-300 text-sm">Total Users</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-600/20 rounded-lg">
-                <UserCheck className="w-6 h-6 text-green-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{activeUsers}</p>
-                <p className="text-slate-300 text-sm">Active Users</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-yellow-600/20 rounded-lg">
-                <Shield className="w-6 h-6 text-yellow-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{pendingKYC}</p>
-                <p className="text-slate-300 text-sm">KYC Pending</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-red-600/20 rounded-lg">
-                <UserX className="w-6 h-6 text-red-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-white">{suspendedUsers}</p>
-                <p className="text-slate-300 text-sm">Suspended</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* User Details Dialog */}
-      <Dialog open={!!selectedUser} onOpenChange={() => setSelectedUser(null)}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-white max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>User Details</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Complete information for {selectedUser?.email}
-            </DialogDescription>
-          </DialogHeader>
-          {selectedUser && (
-            <div className="grid grid-cols-2 gap-4 py-4">
-              <div>
-                <label className="text-sm font-medium text-slate-300">User ID</label>
-                <p className="text-emerald-400 font-mono">{selectedUser.userId}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Email</label>
-                <p className="text-white">{selectedUser.email}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Status</label>
-                <Badge className={getStatusBadge(selectedUser.status)}>
-                  {selectedUser.status}
-                </Badge>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">KYC Status</label>
-                <Badge className={getKYCBadge(selectedUser.kycStatus)}>
-                  {selectedUser.kycStatus}
-                </Badge>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Total Balance</label>
-                <p className="text-white font-medium">{selectedUser.totalBalance}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Total ASVO</label>
-                <p className="text-emerald-400">{selectedUser.totalASVO}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Staked ASVO</label>
-                <p className="text-emerald-300">{selectedUser.stakedASVO}</p>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-300">Registration Date</label>
-                <p className="text-slate-300">{selectedUser.registrationDate}</p>
-              </div>
-              <div className="col-span-2">
-                <label className="text-sm font-medium text-slate-300">Last Login</label>
-                <p className="text-slate-300">{selectedUser.lastLogin}</p>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Action Confirmation Dialog */}
-      <Dialog open={actionDialog.open} onOpenChange={(open) => setActionDialog(prev => ({ ...prev, open }))}>
-        <DialogContent className="bg-slate-900 border-slate-700 text-white">
-          <DialogHeader>
-            <DialogTitle>Confirm Action</DialogTitle>
-            <DialogDescription className="text-slate-400">
-              Are you sure you want to {actionDialog.type} this user?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              onClick={() => setActionDialog({ open: false, type: '', user: null })}
-              className="border-slate-600 text-slate-300"
-            >
-              Cancel
-            </Button>
-            <Button onClick={confirmAction} className="bg-emerald-600 hover:bg-emerald-700">
-              Confirm
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
