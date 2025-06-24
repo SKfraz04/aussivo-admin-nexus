@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import {
   BarChart3,
@@ -124,21 +125,22 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
 
   return (
     <>
-      <Sidebar className="border-r border-emerald-800/30 animate-fade-in">
-        <SidebarHeader className="p-6 border-b border-emerald-800/30">
+      <Sidebar className="border-r border-emerald-800/30 animate-fade-in h-screen flex flex-col">
+        <SidebarHeader className="p-6 border-b border-emerald-800/30 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-center animate-scale-in">
               <img 
                 src="/lovable-uploads/863393d5-f183-46fd-86a2-acfe7e84cacd.png" 
-                alt="Aussivo Logo" 
+                alt="Logo" 
                 className="h-10 w-auto transition-transform duration-300 hover:scale-110"
               />
             </div>
             <SidebarTrigger className="text-emerald-300 hover:text-white transition-colors duration-200" />
           </div>
         </SidebarHeader>
-        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm overflow-hidden">
-          <div className="h-full overflow-hidden">
+        
+        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm flex-1 overflow-y-auto">
+          <div className="h-full">
             {menuGroups.map((group, groupIndex) => (
               <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
                 <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
@@ -172,7 +174,8 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
             ))}
           </div>
         </SidebarContent>
-        <SidebarFooter className="p-4 border-t border-emerald-800/30">
+        
+        <div className="flex-shrink-0 p-4 border-t border-emerald-800/30 bg-slate-900/50 backdrop-blur-sm">
           <div className="glassmorphism rounded-lg p-3 mb-3 animate-fade-in">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
@@ -192,7 +195,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
             <LogOut className="h-5 w-5" />
             <span className="font-medium">Logout</span>
           </Button>
-        </SidebarFooter>
+        </div>
       </Sidebar>
 
       <LogoutConfirmDialog
