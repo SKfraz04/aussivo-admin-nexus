@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,8 +12,7 @@ import {
   Eye,
   CreditCard,
   ArrowUpDown,
-  Clock,
-  EllipsisVertical
+  Clock
 } from 'lucide-react';
 import {
   Table,
@@ -29,13 +29,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 export function DepositsTransactions() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -107,7 +100,7 @@ export function DepositsTransactions() {
     };
     return variants[type as keyof typeof variants] || variants.Deposit;
   };
-  
+
   const pendingDeposits = transactionData.filter(tx => tx.type === 'Deposit' && tx.status === 'Pending');
   const pendingWithdrawals = transactionData.filter(tx => tx.type === 'Withdrawal' && tx.status === 'Pending');
 
@@ -115,26 +108,8 @@ export function DepositsTransactions() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="glassmorphism p-6 rounded-xl border border-emerald-800/30">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Deposits & Transactions</h1>
-            <p className="text-slate-300">Monitor and manage all platform deposit and withdrawal activities.</p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                <EllipsisVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Export Transactions</DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Transaction Analytics</DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Bulk Actions</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-600" />
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Auto-Process Settings</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <h1 className="text-3xl font-bold text-white mb-2">Deposits & Transactions</h1>
+        <p className="text-slate-300">Monitor and manage all platform deposit and withdrawal activities.</p>
       </div>
 
       {/* Transaction Filters */}
@@ -203,24 +178,10 @@ export function DepositsTransactions() {
         {/* Pending Deposits */}
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Pending Deposits ({pendingDeposits.length})
-              </CardTitle>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                    <EllipsisVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                  <DropdownMenuItem className="text-white hover:bg-slate-700">Select All</DropdownMenuItem>
-                  <DropdownMenuItem className="text-green-400 hover:bg-green-600 hover:text-white">Bulk Confirm</DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-400 hover:bg-red-600 hover:text-white">Bulk Reject</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Pending Deposits ({pendingDeposits.length})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -237,18 +198,6 @@ export function DepositsTransactions() {
                     <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
                       <XCircle className="w-4 h-4" />
                     </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                          <EllipsisVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">View Details</DropdownMenuItem>
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">View Blockchain</DropdownMenuItem>
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">Contact User</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </div>
               ))}
@@ -262,24 +211,10 @@ export function DepositsTransactions() {
         {/* Pending Withdrawals */}
         <Card className="glassmorphism border-emerald-800/30">
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Pending Withdrawals ({pendingWithdrawals.length})
-              </CardTitle>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                    <EllipsisVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                  <DropdownMenuItem className="text-white hover:bg-slate-700">Select All</DropdownMenuItem>
-                  <DropdownMenuItem className="text-green-400 hover:bg-green-600 hover:text-white">Bulk Approve</DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-400 hover:bg-red-600 hover:text-white">Bulk Reject</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Clock className="w-5 h-5" />
+              Pending Withdrawals ({pendingWithdrawals.length})
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
@@ -296,18 +231,6 @@ export function DepositsTransactions() {
                     <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
                       <XCircle className="w-4 h-4" />
                     </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                          <EllipsisVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">View Details</DropdownMenuItem>
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">View Blockchain</DropdownMenuItem>
-                        <DropdownMenuItem className="text-white hover:bg-slate-700">Contact User</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
                   </div>
                 </div>
               ))}
@@ -322,24 +245,10 @@ export function DepositsTransactions() {
       {/* All Transactions Table */}
       <Card className="glassmorphism border-emerald-800/30">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-white flex items-center gap-2">
-              <CreditCard className="w-5 h-5" />
-              All Transactions
-            </CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                  <EllipsisVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Export All</DropdownMenuItem>
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Advanced Filter</DropdownMenuItem>
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Column Settings</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <CardTitle className="text-white flex items-center gap-2">
+            <CreditCard className="w-5 h-5" />
+            All Transactions
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -381,34 +290,21 @@ export function DepositsTransactions() {
                     </TableCell>
                     <TableCell className="text-slate-300">{tx.timestamp}</TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                            <EllipsisVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">View on Blockchain</DropdownMenuItem>
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">Contact User</DropdownMenuItem>
-                          {tx.status === 'Pending' && (
-                            <>
-                              <DropdownMenuSeparator className="bg-slate-600" />
-                              <DropdownMenuItem className="text-green-400 hover:bg-green-600 hover:text-white">
-                                <CheckCircle className="w-4 h-4 mr-2" />
-                                Approve
-                              </DropdownMenuItem>
-                              <DropdownMenuItem className="text-red-400 hover:bg-red-600 hover:text-white">
-                                <XCircle className="w-4 h-4 mr-2" />
-                                Reject
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {tx.status === 'Pending' && (
+                          <>
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

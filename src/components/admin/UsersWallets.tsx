@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,8 +13,7 @@ import {
   Lock,
   User,
   Wallet,
-  ArrowUpDown,
-  EllipsisVertical
+  ArrowUpDown
 } from 'lucide-react';
 import {
   Table,
@@ -30,13 +30,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 export function UsersWallets() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -101,26 +94,8 @@ export function UsersWallets() {
     <div className="space-y-6 animate-fade-in">
       {/* Header */}
       <div className="glassmorphism p-6 rounded-xl border border-emerald-800/30">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">User & Wallet Management</h1>
-            <p className="text-slate-300">Manage user accounts, view wallet balances, and track user-specific activities.</p>
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                <EllipsisVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Export All Users</DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Bulk Actions</DropdownMenuItem>
-              <DropdownMenuItem className="text-white hover:bg-slate-700">User Analytics</DropdownMenuItem>
-              <DropdownMenuSeparator className="bg-slate-600" />
-              <DropdownMenuItem className="text-white hover:bg-slate-700">Import Users</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <h1 className="text-3xl font-bold text-white mb-2">User & Wallet Management</h1>
+        <p className="text-slate-300">Manage user accounts, view wallet balances, and track user-specific activities.</p>
       </div>
 
       {/* Search & Filters */}
@@ -174,26 +149,10 @@ export function UsersWallets() {
       {/* User Table */}
       <Card className="glassmorphism border-emerald-800/30">
         <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-white flex items-center gap-2">
-              <User className="w-5 h-5" />
-              User Directory
-            </CardTitle>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
-                  <EllipsisVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Select All</DropdownMenuItem>
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Export Selected</DropdownMenuItem>
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Bulk Edit</DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-slate-600" />
-                <DropdownMenuItem className="text-white hover:bg-slate-700">Table Settings</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <CardTitle className="text-white flex items-center gap-2">
+            <User className="w-5 h-5" />
+            User Directory
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -237,32 +196,20 @@ export function UsersWallets() {
                     <TableCell className="text-slate-300">{user.registrationDate}</TableCell>
                     <TableCell className="text-slate-300">{user.lastLogin}</TableCell>
                     <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white">
-                            <EllipsisVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">
-                            <Eye className="w-4 h-4 mr-2" />
-                            View Profile
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">
-                            <Edit className="w-4 h-4 mr-2" />
-                            Edit User
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="text-white hover:bg-slate-700">
-                            <RefreshCw className="w-4 h-4 mr-2" />
-                            Reset Password
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator className="bg-slate-600" />
-                          <DropdownMenuItem className="text-red-400 hover:bg-red-600 hover:text-white">
-                            <Lock className="w-4 h-4 mr-2" />
-                            Suspend Account
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" className="border-emerald-600 text-emerald-400 hover:bg-emerald-600 hover:text-white">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-blue-600 text-blue-400 hover:bg-blue-600 hover:text-white">
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white">
+                          <RefreshCw className="w-4 h-4" />
+                        </Button>
+                        <Button size="sm" variant="outline" className="border-red-600 text-red-400 hover:bg-red-600 hover:text-white">
+                          <Lock className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
