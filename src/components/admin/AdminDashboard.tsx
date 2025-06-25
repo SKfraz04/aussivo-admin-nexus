@@ -1,409 +1,314 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Progress } from '@/components/ui/progress';
-import { 
-  Users, 
-  Coins, 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown,
-  CheckCircle,
-  MoreHorizontal,
-  ArrowUpRight,
-  ArrowDownRight,
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  TrendingUp,
+  Users,
+  DollarSign,
+  Coins,
+  Clock,
+  AlertCircle,
   Activity,
+  UserPlus,
   BarChart3,
-  PieChart
+  PieChart,
+  Trophy,
+  Shield,
+  Flame,
 } from 'lucide-react';
+import { useAdminData } from '@/hooks/useAdminData';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { useRealTimeData } from '@/hooks/useRealTimeData';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  BarChart,
-  Bar,
   PieChart as RechartsPieChart,
   Pie,
-  Cell
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend
 } from 'recharts';
 
 export function AdminDashboard() {
-  const { isLive, metrics, startLiveData, stopLiveData } = useRealTimeData();
-  const { toast } = useToast();
+  const { users, transactions, stakingPackages, referrals } = useAdminData();
 
-  const handleLiveDataToggle = () => {
-    if (isLive) {
-      stopLiveData();
-      toast({
-        title: "Live Data Stopped",
-        description: "Real-time data updates have been paused.",
-      });
-    } else {
-      startLiveData();
-      toast({
-        title: "Live Data Started",
-        description: "Real-time data updates are now active.",
-      });
-    }
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
-  const kpiData = [
+  // Calculate total pending transactions
+  const pendingTransactions = transactions.filter(tx => tx.status === 'Pending').length;
+
+  // Mock data for recent activity
+  const recentActivities = [
     {
-      title: 'Total Users',
-      value: metrics.totalUsers.toLocaleString(),
-      change: metrics.userGrowth,
-      trend: 'up',
-      icon: Users,
-      description: 'Active users'
+      type: 'user',
+      description: 'New user registered',
+      timestamp: new Date().toISOString(),
     },
     {
-      title: 'ASVO Staked',
-      value: metrics.asvoStaked,
-      change: metrics.stakingGrowth,
-      trend: 'up',
-      icon: Coins,
-      description: 'Total staked'
+      type: 'transaction',
+      description: 'Deposit of $500 confirmed',
+      timestamp: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
     },
     {
-      title: 'TVL',
-      value: metrics.tvl,
-      change: metrics.tvlGrowth,
-      trend: 'up',
-      icon: DollarSign,
-      description: 'Total value'
+      type: 'package',
+      description: 'User staked in Compute Booster package',
+      timestamp: new Date(Date.now() - 7200000).toISOString(), // 2 hours ago
     },
-    {
-      title: 'ICO Progress',
-      value: `${metrics.icoProgress.toFixed(1)}%`,
-      change: '13.5M ASVO',
-      trend: 'neutral',
-      icon: TrendingUp,
-      description: 'of 100M supply'
-    }
   ];
 
-  const recentActivity = [
-    {
-      id: 'TXN_001',
-      user: { name: 'John Doe', avatar: 'JD' },
-      action: 'Deposit',
-      amount: '1,000 USDT',
-      status: 'completed',
-      time: '2 min ago'
-    },
-    {
-      id: 'TXN_002',
-      user: { name: 'Jane Smith', avatar: 'JS' },
-      action: 'Withdrawal',
-      amount: '500 USDT',
-      status: 'pending',
-      time: '5 min ago'
-    },
-    {
-      id: 'TXN_003',
-      user: { name: 'Mike Wilson', avatar: 'MW' },
-      action: 'Staking',
-      amount: '2,500 ASVO',
-      status: 'completed',
-      time: '10 min ago'
-    }
-  ];
-
-  const chartData = [
-    { name: 'Jan', users: 4000, revenue: 2400 },
-    { name: 'Feb', users: 3000, revenue: 1398 },
-    { name: 'Mar', users: 2000, revenue: 9800 },
-    { name: 'Apr', users: 2780, revenue: 3908 },
-    { name: 'May', users: 1890, revenue: 4800 },
-    { name: 'Jun', users: 2390, revenue: 3800 },
-  ];
-
-  const pieData = [
-    { name: 'Core Validator', value: 45, color: '#10b981' },
-    { name: 'Premium Staker', value: 30, color: '#06b6d4' },
-    { name: 'Basic Staker', value: 20, color: '#8b5cf6' },
-    { name: 'Starter', value: 5, color: '#f59e0b' },
+  // Mock data for user distribution chart
+  const distributionData = [
+    { name: 'Micro Node', value: 400, color: '#34D399' },
+    { name: 'Compute Booster', value: 300, color: '#10B981' },
+    { name: 'Data Streamer', value: 300, color: '#059669' },
+    { name: 'Edge Power Node', value: 200, color: '#047857' },
+    { name: 'Core Validator Tier', value: 100, color: '#065F46' },
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
-      {/* Header Section */}
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-white via-emerald-200 to-teal-300 bg-clip-text text-transparent">
-            Admin Dashboard
-          </h1>
-          <p className="text-slate-400 text-lg">Complete platform overview and analytics</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            className={`border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20 transition-all duration-300 hover:scale-105 ${
-              isLive ? 'bg-emerald-600/20 border-emerald-400 shadow-lg shadow-emerald-500/20' : ''
-            }`}
-            onClick={handleLiveDataToggle}
-          >
-            <Activity className={`h-4 w-4 mr-2 ${isLive ? 'animate-pulse' : ''} text-emerald-400`} />
-            {isLive ? 'Live Data ON' : 'Live Data'}
-          </Button>
-        </div>
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-white mb-2 animate-slide-in">Admin Dashboard</h1>
+        <p className="text-slate-300 animate-slide-in" style={{ animationDelay: '200ms' }}>
+          Monitor your platform's key metrics and activities
+        </p>
       </div>
 
-      {/* Live Data Indicator */}
-      {isLive && (
-        <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-600/10 via-emerald-500/10 to-teal-600/10 border border-emerald-600/30 rounded-xl backdrop-blur-sm animate-scale-in">
-          <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
-          <span className="text-emerald-400 font-medium">Live data updates active - refreshing every 2 seconds</span>
-        </div>
-      )}
-
-      {/* KPI Cards */}
+      {/* Key Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {kpiData.map((kpi, index) => (
-          <Card 
-            key={index} 
-            className="glassmorphism border-emerald-800/30 hover:border-emerald-600/50 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-emerald-500/10 group animate-fade-in"
-            style={{ animationDelay: `${index * 0.1}s` }}
-          >
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
-                {kpi.title}
-              </CardTitle>
-              <div className="p-2 rounded-lg bg-emerald-600/20 group-hover:scale-110 transition-transform duration-300">
-                <kpi.icon className="h-4 w-4 text-emerald-400" />
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-3xl font-bold text-emerald-400 group-hover:scale-105 transition-transform duration-300">
-                {kpi.value}
-              </div>
-              <div className="flex items-center space-x-2 text-xs">
-                <div className={`flex items-center ${
-                  kpi.trend === 'up' ? 'text-emerald-400' : 
-                  kpi.trend === 'down' ? 'text-red-400' : 'text-slate-400'
-                }`}>
-                  {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3 text-emerald-400" /> :
-                   kpi.trend === 'down' ? <ArrowDownRight className="h-3 w-3 text-red-400" /> : null}
-                  <span className="font-medium">{kpi.change}</span>
-                </div>
-                <span className="text-slate-500">{kpi.description}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Analytics Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* User Growth Chart */}
-        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <CardHeader className="pb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-600/20">
-                <BarChart3 className="h-5 w-5 text-emerald-400" />
-              </div>
+        {/* Total Users */}
+        <Card className="glassmorphism border-emerald-800/30 animate-scale-in">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                  User Growth
-                </CardTitle>
-                <p className="text-slate-400 text-sm">Monthly active users</p>
+                <p className="text-2xl font-bold text-white">{users.length}</p>
+                <p className="text-slate-300 text-sm">Total Users</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <TrendingUp className="h-3 w-3 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs">+12% this month</span>
+                </div>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData}>
-                  <defs>
-                    <linearGradient id="userGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9ca3af" />
-                  <YAxis stroke="#9ca3af" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1f2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="users" 
-                    stroke="#10b981" 
-                    fillOpacity={1} 
-                    fill="url(#userGradient)" 
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+              <div className="p-3 bg-emerald-600/20 rounded-full">
+                <Users className="h-6 w-6 text-emerald-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Staking Distribution */}
-        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <CardHeader className="pb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-600/20">
-                <PieChart className="h-5 w-5 text-emerald-400" />
-              </div>
+        {/* Total Revenue */}
+        <Card className="glassmorphism border-emerald-800/30 animate-scale-in" style={{ animationDelay: '100ms' }}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                  Staking Distribution
-                </CardTitle>
-                <p className="text-slate-400 text-sm">By package type</p>
+                <p className="text-2xl font-bold text-white">$2.5M</p>
+                <p className="text-slate-300 text-sm">Total Revenue</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <TrendingUp className="h-3 w-3 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs">+8.2% this month</span>
+                </div>
+              </div>
+              <div className="p-3 bg-emerald-600/20 rounded-full">
+                <DollarSign className="h-6 w-6 text-emerald-400" />
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <RechartsPieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1f2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '8px'
-                    }}
-                  />
-                </RechartsPieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {pieData.map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-sm text-slate-300">{item.name}</span>
+          </CardContent>
+        </Card>
+
+        {/* Active Stakes */}
+        <Card className="glassmorphism border-emerald-800/30 animate-scale-in" style={{ animationDelay: '200ms' }}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">1,247</p>
+                <p className="text-slate-300 text-sm">Active Stakes</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <TrendingUp className="h-3 w-3 text-emerald-400" />
+                  <span className="text-emerald-400 text-xs">+15.3% this week</span>
                 </div>
-              ))}
+              </div>
+              <div className="p-3 bg-emerald-600/20 rounded-full">
+                <Coins className="h-6 w-6 text-emerald-400" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pending Transactions */}
+        <Card className="glassmorphism border-emerald-800/30 animate-scale-in" style={{ animationDelay: '300ms' }}>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-2xl font-bold text-white">{pendingTransactions}</p>
+                <p className="text-slate-300 text-sm">Pending Transactions</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <Clock className="h-3 w-3 text-yellow-400" />
+                  <span className="text-yellow-400 text-xs">Requires attention</span>
+                </div>
+              </div>
+              <div className="p-3 bg-yellow-600/20 rounded-full">
+                <AlertCircle className="h-6 w-6 text-yellow-400" />
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Recent Activity and Revenue Analytics in Parallel */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Recent Activity and Revenue Analytics - Parallel Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Activity */}
-        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-          <CardHeader className="flex flex-row items-center justify-between pb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-600/20">
-                <Activity className="h-5 w-5 text-emerald-400" />
-              </div>
-              <div className="space-y-1">
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                  Recent Activity
-                </CardTitle>
-                <p className="text-slate-400 text-sm">Latest platform transactions</p>
-              </div>
-            </div>
-            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-emerald-600/20 transition-all duration-300">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
+        <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Activity className="h-5 w-5 text-emerald-400" />
+              Recent Activity
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div 
-                  key={activity.id} 
-                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-slate-800/30 to-slate-700/20 border border-emerald-800/20 hover:border-emerald-600/40 transition-all duration-300 hover:scale-[1.02] group animate-scale-in"
-                  style={{ animationDelay: `${0.8 + index * 0.1}s` }}
-                >
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-10 w-10 ring-2 ring-emerald-500/20 group-hover:ring-emerald-400/40 transition-all duration-300">
-                      <AvatarFallback className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 text-emerald-400 text-sm font-medium">
-                        {activity.user.avatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-white font-medium">{activity.user.name}</p>
-                      <p className="text-slate-400 text-sm">{activity.action} • <span className="text-emerald-400">{activity.amount}</span></p>
-                    </div>
-                  </div>
-                  <div className="text-right space-y-1">
-                    <Badge 
-                      variant={activity.status === 'completed' ? 'default' : 'secondary'}
-                      className={`text-xs transition-all duration-300 ${
-                        activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50 hover:bg-emerald-600/30' :
-                        'bg-yellow-600/20 text-yellow-400 border-yellow-600/50 hover:bg-yellow-600/30'
-                      }`}
-                    >
-                      {activity.status}
-                    </Badge>
-                    <p className="text-slate-500 text-xs">{activity.time}</p>
-                  </div>
+          <CardContent className="space-y-4">
+            {recentActivities.map((activity, index) => (
+              <div key={index} className="flex items-start gap-3 animate-slide-in" style={{ animationDelay: `${index * 100}ms` }}>
+                <div className={`p-2 rounded-full ${activity.type === 'user' ? 'bg-blue-600/20' : 
+                  activity.type === 'transaction' ? 'bg-emerald-600/20' : 'bg-yellow-600/20'}`}>
+                  {activity.type === 'user' ? (
+                    <UserPlus className="h-4 w-4 text-blue-400" />
+                  ) : activity.type === 'transaction' ? (
+                    <TrendingUp className="h-4 w-4 text-emerald-400" />
+                  ) : (
+                    <Coins className="h-4 w-4 text-yellow-400" />
+                  )}
                 </div>
-              ))}
-            </div>
+                <div className="flex-1">
+                  <p className="text-white text-sm">{activity.description}</p>
+                  <p className="text-slate-400 text-xs">{formatDateTime(activity.timestamp)}</p>
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Revenue Analytics */}
-        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <CardHeader className="pb-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-600/20">
-                <TrendingUp className="h-5 w-5 text-emerald-400" />
-              </div>
-              <div>
-                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                  Revenue Analytics
-                </CardTitle>
-                <p className="text-slate-400 text-sm">Monthly revenue breakdown</p>
-              </div>
-            </div>
+        <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-emerald-400" />
+              Revenue Analytics
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="name" stroke="#9ca3af" />
-                  <YAxis stroke="#9ca3af" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#1f2937', 
-                      border: '1px solid #374151',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 text-sm">Total Revenue</span>
+                <span className="text-white font-semibold">$2,550,000</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 text-sm">Monthly Growth</span>
+                <span className="text-emerald-400 font-semibold">+8.2%</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-slate-300 text-sm">Active Packages</span>
+                <span className="text-white font-semibold">1,247</span>
+              </div>
+              <div className="mt-4 p-4 bg-emerald-900/20 rounded-lg border border-emerald-800/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                  <span className="text-emerald-400 text-sm font-medium">This Month</span>
+                </div>
+                <div className="text-white text-lg font-bold">$340,000</div>
+                <div className="text-slate-400 text-xs">+12% from last month</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* User Distribution Chart */}
+      <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <PieChart className="h-5 w-5 text-emerald-400" />
+            User Distribution by Package
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <RechartsPieChart>
+                <Pie
+                  data={distributionData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={120}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {distributionData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                    borderRadius: '8px',
+                    color: 'white'
+                  }}
+                />
+                <Legend
+                  wrapperStyle={{
+                    color: 'white'
+                  }}
+                />
+              </RechartsPieChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="p-3 bg-emerald-600/20 rounded-full w-fit mx-auto mb-4">
+                <Trophy className="h-8 w-8 text-emerald-400" />
+              </div>
+              <p className="text-2xl font-bold text-white">854</p>
+              <p className="text-slate-300 text-sm">Active Referrals</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="p-3 bg-blue-600/20 rounded-full w-fit mx-auto mb-4">
+                <Shield className="h-8 w-8 text-blue-400" />
+              </div>
+              <p className="text-2xl font-bold text-white">12</p>
+              <p className="text-slate-300 text-sm">Active Proposals</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="glassmorphism border-emerald-800/30 animate-fade-in">
+          <CardContent className="p-6">
+            <div className="text-center">
+              <div className="p-3 bg-red-600/20 rounded-full w-fit mx-auto mb-4">
+                <Flame className="h-8 w-8 text-red-400" />
+              </div>
+              <p className="text-2xl font-bold text-white">5.2M</p>
+              <p className="text-slate-300 text-sm">Tokens Burned</p>
             </div>
           </CardContent>
         </Card>

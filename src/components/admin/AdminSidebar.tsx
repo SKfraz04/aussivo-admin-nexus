@@ -125,7 +125,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
 
   return (
     <>
-      <Sidebar className="border-r border-emerald-800/30 animate-fade-in fixed left-0 top-0 h-screen flex flex-col z-50">
+      <Sidebar className="border-r border-emerald-800/30 animate-fade-in fixed left-0 top-0 h-screen flex flex-col z-50 overflow-hidden">
         <SidebarHeader className="p-6 border-b border-emerald-800/30 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-center animate-scale-in">
@@ -139,8 +139,8 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
           </div>
         </SidebarHeader>
         
-        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm flex-1 overflow-y-auto">
-          <div className="h-full">
+        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm flex-1 overflow-hidden">
+          <div className="h-full flex flex-col">
             {menuGroups.map((group, groupIndex) => (
               <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
                 <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
