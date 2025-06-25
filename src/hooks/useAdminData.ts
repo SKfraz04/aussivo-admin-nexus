@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { User, Transaction, FilterState } from '@/types/admin';
 
@@ -11,7 +10,7 @@ const mockUsers: User[] = [
     stakedASVO: '10,000 ASVO',
     status: 'Active',
     registrationDate: '2024-01-15',
-    lastLogin: '2024-06-24 10:30',
+    lastLogin: '2024-06-24T10:28:00Z',
     kycStatus: 'Verified'
   },
   {
@@ -22,7 +21,7 @@ const mockUsers: User[] = [
     stakedASVO: '5,000 ASVO',
     status: 'Active',
     registrationDate: '2024-02-20',
-    lastLogin: '2024-06-23 15:45',
+    lastLogin: '2024-06-23T15:45:00Z',
     kycStatus: 'Pending'
   },
   {
@@ -33,7 +32,7 @@ const mockUsers: User[] = [
     stakedASVO: '18,000 ASVO',
     status: 'Suspended',
     registrationDate: '2024-01-08',
-    lastLogin: '2024-06-22 09:15',
+    lastLogin: '2024-06-22T09:15:00Z',
     kycStatus: 'Verified'
   },
   {
@@ -44,7 +43,7 @@ const mockUsers: User[] = [
     stakedASVO: '2,000 ASVO',
     status: 'Active',
     registrationDate: '2024-03-10',
-    lastLogin: '2024-06-24 08:15',
+    lastLogin: '2025-05-22T18:28:00Z',
     kycStatus: 'Pending'
   }
 ];
@@ -122,11 +121,8 @@ export const useAdminData = () => {
       
       const matchesStatus = userFilters.statusFilter === 'all' || 
         user.status.toLowerCase() === userFilters.statusFilter.toLowerCase();
-      
-      const matchesKYC = userFilters.verificationFilter === 'all' || 
-        user.kycStatus.toLowerCase() === userFilters.verificationFilter.toLowerCase();
 
-      return matchesSearch && matchesStatus && matchesKYC;
+      return matchesSearch && matchesStatus;
     });
   }, [users, userFilters]);
 

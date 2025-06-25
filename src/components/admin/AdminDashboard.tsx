@@ -319,91 +319,94 @@ export function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Recent Activity */}
-      <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-        <CardHeader className="flex flex-row items-center justify-between pb-6">
-          <div className="space-y-1">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-              Recent Activity
-            </CardTitle>
-            <p className="text-slate-400">Latest platform transactions</p>
-          </div>
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-emerald-600/20 transition-all duration-300">
-            <MoreHorizontal className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div 
-                key={activity.id} 
-                className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-slate-800/30 to-slate-700/20 border border-emerald-800/20 hover:border-emerald-600/40 transition-all duration-300 hover:scale-[1.02] group animate-scale-in"
-                style={{ animationDelay: `${0.8 + index * 0.1}s` }}
-              >
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-10 w-10 ring-2 ring-emerald-500/20 group-hover:ring-emerald-400/40 transition-all duration-300">
-                    <AvatarFallback className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 text-emerald-400 text-sm font-medium">
-                      {activity.user.avatar}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-white font-medium">{activity.user.name}</p>
-                    <p className="text-slate-400 text-sm">{activity.action} • <span className="text-emerald-400">{activity.amount}</span></p>
+      {/* Recent Activity and Revenue Analytics in Parallel */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Recent Activity */}
+        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+          <CardHeader className="flex flex-row items-center justify-between pb-6">
+            <div className="space-y-1">
+              <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+                Recent Activity
+              </CardTitle>
+              <p className="text-slate-400 text-sm">Latest platform transactions</p>
+            </div>
+            <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-emerald-600/20 transition-all duration-300">
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivity.map((activity, index) => (
+                <div 
+                  key={activity.id} 
+                  className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-slate-800/30 to-slate-700/20 border border-emerald-800/20 hover:border-emerald-600/40 transition-all duration-300 hover:scale-[1.02] group animate-scale-in"
+                  style={{ animationDelay: `${0.8 + index * 0.1}s` }}
+                >
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-10 w-10 ring-2 ring-emerald-500/20 group-hover:ring-emerald-400/40 transition-all duration-300">
+                      <AvatarFallback className="bg-gradient-to-r from-emerald-600/20 to-teal-600/20 text-emerald-400 text-sm font-medium">
+                        {activity.user.avatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-white font-medium">{activity.user.name}</p>
+                      <p className="text-slate-400 text-sm">{activity.action} • <span className="text-emerald-400">{activity.amount}</span></p>
+                    </div>
+                  </div>
+                  <div className="text-right space-y-1">
+                    <Badge 
+                      variant={activity.status === 'completed' ? 'default' : 'secondary'}
+                      className={`text-xs transition-all duration-300 ${
+                        activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50 hover:bg-emerald-600/30' :
+                        'bg-yellow-600/20 text-yellow-400 border-yellow-600/50 hover:bg-yellow-600/30'
+                      }`}
+                    >
+                      {activity.status}
+                    </Badge>
+                    <p className="text-slate-500 text-xs">{activity.time}</p>
                   </div>
                 </div>
-                <div className="text-right space-y-1">
-                  <Badge 
-                    variant={activity.status === 'completed' ? 'default' : 'secondary'}
-                    className={`text-xs transition-all duration-300 ${
-                      activity.status === 'completed' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50 hover:bg-emerald-600/30' :
-                      'bg-yellow-600/20 text-yellow-400 border-yellow-600/50 hover:bg-yellow-600/30'
-                    }`}
-                  >
-                    {activity.status}
-                  </Badge>
-                  <p className="text-slate-500 text-xs">{activity.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Revenue Analytics */}
-      <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.9s' }}>
-        <CardHeader className="pb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 bg-opacity-20">
-              <TrendingUp className="h-5 w-5 text-emerald-400" />
+        {/* Revenue Analytics */}
+        <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          <CardHeader className="pb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 bg-opacity-20">
+                <TrendingUp className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+                  Revenue Analytics
+                </CardTitle>
+                <p className="text-slate-400 text-sm">Monthly revenue breakdown</p>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                Revenue Analytics
-              </CardTitle>
-              <p className="text-slate-400 text-sm">Monthly revenue breakdown</p>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="name" stroke="#9ca3af" />
+                  <YAxis stroke="#9ca3af" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1f2937', 
+                      border: '1px solid #374151',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="name" stroke="#9ca3af" />
-                <YAxis stroke="#9ca3af" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1f2937', 
-                    border: '1px solid #374151',
-                    borderRadius: '8px'
-                  }}
-                />
-                <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

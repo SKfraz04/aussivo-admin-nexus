@@ -11,7 +11,6 @@ import {
   MoreHorizontal, 
   UserCheck, 
   UserX, 
-  Shield,
   Download,
   Plus,
   Eye
@@ -31,6 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useToast } from '@/hooks/use-toast';
 
@@ -55,13 +60,16 @@ export function UsersWallets() {
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.Inactive;
   };
 
-  const getKycBadge = (status: string) => {
-    const kycConfig = {
-      'Verified': 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50',
-      'Pending': 'bg-yellow-600/20 text-yellow-400 border-yellow-600/50',
-      'Rejected': 'bg-red-600/20 text-red-400 border-red-600/50'
-    };
-    return kycConfig[status as keyof typeof kycConfig] || kycConfig.Pending;
+  const formatLastLogin = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
   return (
@@ -70,7 +78,7 @@ export function UsersWallets() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white">Users & Wallets</h1>
-          <p className="text-slate-400">Manage user accounts, wallets, and verification status</p>
+          <p className="text-slate-400">Manage user accounts and wallets</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
@@ -85,7 +93,7 @@ export function UsersWallets() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="glassmorphism border-emerald-800/30">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -106,18 +114,6 @@ export function UsersWallets() {
                 <p className="text-slate-300 text-sm">Active Users</p>
               </div>
               <UserCheck className="h-5 w-5 text-emerald-400" />
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-white">{users.filter(u => u.kycStatus === 'Verified').length}</p>
-                <p className="text-slate-300 text-sm">KYC Verified</p>
-              </div>
-              <Shield className="h-5 w-5 text-emerald-400" />
             </div>
           </CardContent>
         </Card>
@@ -167,18 +163,6 @@ export function UsersWallets() {
                 </SelectContent>
               </Select>
               
-              <Select value={userFilters.verificationFilter} onValueChange={(value) => setUserFilters(prev => ({ ...prev, verificationFilter: value }))}>
-                <SelectTrigger className="w-32 bg-slate-800/50 border-emerald-800/30 text-white">
-                  <SelectValue placeholder="KYC" />
-                </SelectTrigger>
-                <SelectContent className="bg-slate-800 border-emerald-800/30">
-                  <SelectItem value="all">All KYC</SelectItem>
-                  <SelectItem value="verified">Verified</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="rejected">Rejected</SelectItem>
-                </SelectContent>
-              </Select>
-              
               <Button variant="outline" size="sm" className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20">
                 <Filter className="h-4 w-4 mr-2" />
                 Filters
@@ -198,7 +182,6 @@ export function UsersWallets() {
                   <TableHead className="text-slate-300 font-semibold">User</TableHead>
                   <TableHead className="text-slate-300 font-semibold">Balances</TableHead>
                   <TableHead className="text-slate-300 font-semibold">Status</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">KYC</TableHead>
                   <TableHead className="text-slate-300 font-semibold">Last Login</TableHead>
                   <TableHead className="text-slate-300 font-semibold">Actions</TableHead>
                 </TableRow>
@@ -231,34 +214,45 @@ export function UsersWallets() {
                         {user.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getKycBadge(user.kycStatus)}>
-                        {user.kycStatus}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-slate-300 font-mono text-sm">
-                      {user.lastLogin}
+                    <TableCell className="text-slate-300 text-sm">
+                      {formatLastLogin(user.lastLogin)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="text-slate-400 hover:text-white"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Select onValueChange={(value) => handleStatusUpdate(user.userId, value as any)}>
-                          <SelectTrigger className="h-8 w-8 p-0 border-0 bg-transparent hover:bg-slate-700">
-                            <MoreHorizontal className="h-4 w-4 text-slate-400" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-emerald-800/30">
-                            <SelectItem value="Active">Set Active</SelectItem>
-                            <SelectItem value="Suspended">Suspend User</SelectItem>
-                            <SelectItem value="Inactive">Set Inactive</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-slate-400 hover:text-white"
+                          >
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="bg-slate-800 border-emerald-800/30">
+                          <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusUpdate(user.userId, 'Active')}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
+                            Set Active
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusUpdate(user.userId, 'Suspended')}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
+                            Suspend User
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => handleStatusUpdate(user.userId, 'Inactive')}
+                            className="text-slate-300 hover:text-white hover:bg-slate-700"
+                          >
+                            Set Inactive
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}
