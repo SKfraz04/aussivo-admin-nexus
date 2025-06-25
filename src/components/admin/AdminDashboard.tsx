@@ -71,8 +71,7 @@ export function AdminDashboard() {
       change: metrics.userGrowth,
       trend: 'up',
       icon: Users,
-      description: 'Active users',
-      gradient: 'from-blue-400 to-purple-500'
+      description: 'Active users'
     },
     {
       title: 'ASVO Staked',
@@ -80,8 +79,7 @@ export function AdminDashboard() {
       change: metrics.stakingGrowth,
       trend: 'up',
       icon: Coins,
-      description: 'Total staked',
-      gradient: 'from-emerald-400 to-teal-500'
+      description: 'Total staked'
     },
     {
       title: 'TVL',
@@ -89,8 +87,7 @@ export function AdminDashboard() {
       change: metrics.tvlGrowth,
       trend: 'up',
       icon: DollarSign,
-      description: 'Total value',
-      gradient: 'from-yellow-400 to-orange-500'
+      description: 'Total value'
     },
     {
       title: 'ICO Progress',
@@ -98,8 +95,7 @@ export function AdminDashboard() {
       change: '13.5M ASVO',
       trend: 'neutral',
       icon: TrendingUp,
-      description: 'of 100M supply',
-      gradient: 'from-pink-400 to-rose-500'
+      description: 'of 100M supply'
     }
   ];
 
@@ -141,7 +137,7 @@ export function AdminDashboard() {
 
   const pieData = [
     { name: 'Core Validator', value: 45, color: '#10b981' },
-    { name: 'Premium Staker', value: 30, color: '#3b82f6' },
+    { name: 'Premium Staker', value: 30, color: '#06b6d4' },
     { name: 'Basic Staker', value: 20, color: '#8b5cf6' },
     { name: 'Starter', value: 5, color: '#f59e0b' },
   ];
@@ -164,7 +160,7 @@ export function AdminDashboard() {
             }`}
             onClick={handleLiveDataToggle}
           >
-            <Activity className={`h-4 w-4 mr-2 ${isLive ? 'animate-pulse' : ''}`} />
+            <Activity className={`h-4 w-4 mr-2 ${isLive ? 'animate-pulse' : ''} text-emerald-400`} />
             {isLive ? 'Live Data ON' : 'Live Data'}
           </Button>
         </div>
@@ -190,12 +186,12 @@ export function AdminDashboard() {
               <CardTitle className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
                 {kpi.title}
               </CardTitle>
-              <div className={`p-2 rounded-lg bg-gradient-to-r ${kpi.gradient} bg-opacity-20 group-hover:scale-110 transition-transform duration-300`}>
-                <kpi.icon className="h-4 w-4 text-white" />
+              <div className="p-2 rounded-lg bg-emerald-600/20 group-hover:scale-110 transition-transform duration-300">
+                <kpi.icon className="h-4 w-4 text-emerald-400" />
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className={`text-3xl font-bold bg-gradient-to-r ${kpi.gradient} bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300`}>
+              <div className="text-3xl font-bold text-emerald-400 group-hover:scale-105 transition-transform duration-300">
                 {kpi.value}
               </div>
               <div className="flex items-center space-x-2 text-xs">
@@ -203,8 +199,8 @@ export function AdminDashboard() {
                   kpi.trend === 'up' ? 'text-emerald-400' : 
                   kpi.trend === 'down' ? 'text-red-400' : 'text-slate-400'
                 }`}>
-                  {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3" /> :
-                   kpi.trend === 'down' ? <ArrowDownRight className="h-3 w-3" /> : null}
+                  {kpi.trend === 'up' ? <ArrowUpRight className="h-3 w-3 text-emerald-400" /> :
+                   kpi.trend === 'down' ? <ArrowDownRight className="h-3 w-3 text-red-400" /> : null}
                   <span className="font-medium">{kpi.change}</span>
                 </div>
                 <span className="text-slate-500">{kpi.description}</span>
@@ -220,8 +216,8 @@ export function AdminDashboard() {
         <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.5s' }}>
           <CardHeader className="pb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 bg-opacity-20">
-                <BarChart3 className="h-5 w-5 text-blue-400" />
+              <div className="p-2 rounded-lg bg-emerald-600/20">
+                <BarChart3 className="h-5 w-5 text-emerald-400" />
               </div>
               <div>
                 <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
@@ -269,8 +265,8 @@ export function AdminDashboard() {
         <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <CardHeader className="pb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-600 bg-opacity-20">
-                <PieChart className="h-5 w-5 text-purple-400" />
+              <div className="p-2 rounded-lg bg-emerald-600/20">
+                <PieChart className="h-5 w-5 text-emerald-400" />
               </div>
               <div>
                 <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
@@ -324,11 +320,16 @@ export function AdminDashboard() {
         {/* Recent Activity */}
         <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.7s' }}>
           <CardHeader className="flex flex-row items-center justify-between pb-6">
-            <div className="space-y-1">
-              <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
-                Recent Activity
-              </CardTitle>
-              <p className="text-slate-400 text-sm">Latest platform transactions</p>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-emerald-600/20">
+                <Activity className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div className="space-y-1">
+                <CardTitle className="text-xl font-bold bg-gradient-to-r from-white to-emerald-200 bg-clip-text text-transparent">
+                  Recent Activity
+                </CardTitle>
+                <p className="text-slate-400 text-sm">Latest platform transactions</p>
+              </div>
             </div>
             <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white hover:bg-emerald-600/20 transition-all duration-300">
               <MoreHorizontal className="h-4 w-4" />
@@ -375,7 +376,7 @@ export function AdminDashboard() {
         <Card className="glassmorphism border-emerald-800/30 hover:border-emerald-600/30 transition-all duration-300 animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <CardHeader className="pb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-600 bg-opacity-20">
+              <div className="p-2 rounded-lg bg-emerald-600/20">
                 <TrendingUp className="h-5 w-5 text-emerald-400" />
               </div>
               <div>

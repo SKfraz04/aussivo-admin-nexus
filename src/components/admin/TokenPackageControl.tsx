@@ -8,6 +8,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Coins, Package, Plus, TrendingUp, Users, Percent } from 'lucide-react';
 
 export function TokenPackageControl() {
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="glassmorphism p-6 rounded-xl border border-emerald-800/30">
@@ -63,11 +75,11 @@ export function TokenPackageControl() {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-slate-400">Start Date:</p>
-                    <p className="text-white">October 1, 2023</p>
+                    <p className="text-white">{formatDateTime('2023-10-01T00:00:00Z')}</p>
                   </div>
                   <div>
                     <p className="text-slate-400">End Date:</p>
-                    <p className="text-white">November 15, 2023</p>
+                    <p className="text-white">{formatDateTime('2023-11-15T23:59:59Z')}</p>
                   </div>
                   <div>
                     <p className="text-slate-400">Allocation Sold:</p>
@@ -108,7 +120,7 @@ export function TokenPackageControl() {
                     <TableCell className="text-white">Phase 1</TableCell>
                     <TableCell className="text-white">$0.003</TableCell>
                     <TableCell className="text-white">30 days</TableCell>
-                    <TableCell className="text-white">2023-09-01 to 2023-09-30</TableCell>
+                    <TableCell className="text-white">{formatDateTime('2023-09-01T00:00:00Z')} to {formatDateTime('2023-09-30T23:59:59Z')}</TableCell>
                     <TableCell>
                       <Badge className="bg-emerald-900/20 text-emerald-400 border-emerald-600/30">100%</Badge>
                     </TableCell>
@@ -125,7 +137,7 @@ export function TokenPackageControl() {
                     <TableCell className="text-white">Phase 2</TableCell>
                     <TableCell className="text-white">$0.005</TableCell>
                     <TableCell className="text-white">45 days</TableCell>
-                    <TableCell className="text-white">2023-10-01 to 2023-11-15</TableCell>
+                    <TableCell className="text-white">{formatDateTime('2023-10-01T00:00:00Z')} to {formatDateTime('2023-11-15T23:59:59Z')}</TableCell>
                     <TableCell>
                       <Badge className="bg-emerald-900/20 text-emerald-400 border-emerald-600/30">68%</Badge>
                     </TableCell>
@@ -142,7 +154,7 @@ export function TokenPackageControl() {
                     <TableCell className="text-white">Phase 3</TableCell>
                     <TableCell className="text-white">$0.008</TableCell>
                     <TableCell className="text-white">60 days</TableCell>
-                    <TableCell className="text-white">2023-11-16 to 2024-01-15</TableCell>
+                    <TableCell className="text-white">{formatDateTime('2023-11-16T00:00:00Z')} to {formatDateTime('2024-01-15T23:59:59Z')}</TableCell>
                     <TableCell>
                       <Badge className="bg-slate-700/50 text-slate-300 border-slate-600/30">0%</Badge>
                     </TableCell>
