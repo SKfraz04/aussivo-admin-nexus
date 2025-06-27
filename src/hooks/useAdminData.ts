@@ -139,7 +139,10 @@ export const useAdminData = () => {
       const matchesStatus = userFilters.statusFilter === 'all' || 
         user.status.toLowerCase() === userFilters.statusFilter.toLowerCase();
 
-      return matchesSearch && matchesStatus;
+      const matchesVerification = userFilters.verificationFilter === 'all' || 
+        user.kycStatus.toLowerCase() === userFilters.verificationFilter.toLowerCase();
+
+      return matchesSearch && matchesStatus && matchesVerification;
     });
   }, [users, userFilters]);
 
