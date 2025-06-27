@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { User, Transaction, FilterState } from '@/types/admin';
 
@@ -95,9 +96,25 @@ const mockTransactions: Transaction[] = [
   }
 ];
 
+const mockStakingPackages = [
+  { id: 1, name: 'Micro Node', totalStaked: 12500 },
+  { id: 2, name: 'Compute Booster', totalStaked: 25000 },
+  { id: 3, name: 'Data Streamer', totalStaked: 50000 },
+  { id: 4, name: 'Edge Power Node', totalStaked: 100000 },
+  { id: 5, name: 'Core Validator Tier', totalStaked: 250000 }
+];
+
+const mockReferrals = [
+  { id: 1, userId: 'USR_001', referredUserId: 'USR_002', commission: 150 },
+  { id: 2, userId: 'USR_002', referredUserId: 'USR_003', commission: 200 },
+  { id: 3, userId: 'USR_001', referredUserId: 'USR_004', commission: 125 }
+];
+
 export const useAdminData = () => {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [stakingPackages] = useState(mockStakingPackages);
+  const [referrals] = useState(mockReferrals);
   const [userFilters, setUserFilters] = useState<FilterState>({
     searchTerm: '',
     statusFilter: 'all',
@@ -161,6 +178,8 @@ export const useAdminData = () => {
   return {
     users: filteredUsers,
     transactions: filteredTransactions,
+    stakingPackages,
+    referrals,
     userFilters,
     transactionFilters,
     setUserFilters,
