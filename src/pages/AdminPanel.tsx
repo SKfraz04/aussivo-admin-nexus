@@ -1,5 +1,6 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { AdminSidebar } from '../components/admin/AdminSidebar';
 import { AdminDashboard } from '../components/admin/AdminDashboard';
 import { UsersWallets } from '../components/admin/UsersWallets';
@@ -26,8 +27,48 @@ export type AdminSection =
   | 'staking-history-packages'
   | 'reports-analytics';
 
-const AdminPanel = () => {
+interface AdminPanelProps {
+  section?: AdminSection;
+}
+
+const AdminPanel = ({ section }: AdminPanelProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [activeSection, setActiveSection] = useState<AdminSection>('dashboard');
+
+  // Map URL paths to sections
+  const pathToSection: Record<string, AdminSection> = {
+    '/admin': 'dashboard',
+    '/admin/dashboard': 'dashboard',
+    '/admin/users-wallets': 'users-wallets',
+    '/admin/deposits-transactions': 'deposits-transactions',
+    '/admin/token-package-control': 'token-package-control',
+    '/admin/staking-apy-settings': 'staking-apy-settings',
+    '/admin/referrals-leaderboard': 'referrals-leaderboard',
+    '/admin/governance-dao': 'governance-dao',
+    '/admin/rewards-burn-control': 'rewards-burn-control',
+    '/admin/staking-history-packages': 'staking-history-packages',
+    '/admin/reports-analytics': 'reports-analytics',
+  };
+
+  // Update active section based on URL or prop
+  useEffect(() => {
+    if (section) {
+      setActiveSection(section);
+    } else {
+      const sectionFromPath = pathToSection[location.pathname];
+      if (sectionFromPath) {
+        setActiveSection(sectionFromPath);
+      }
+    }
+  }, [location.pathname, section]);
+
+  // Handle section changes and update URL
+  const handleSectionChange = (newSection: AdminSection) => {
+    setActiveSection(newSection);
+    const newPath = newSection === 'dashboard' ? '/admin/dashboard' : `/admin/${newSection}`;
+    navigate(newPath);
+  };
 
   const renderActiveSection = () => {
     const sectionComponents = {
@@ -57,7 +98,7 @@ const AdminPanel = () => {
         <div className="flex flex-1">
           <AdminSidebar 
             activeSection={activeSection} 
-            setActiveSection={setActiveSection} 
+            setActiveSection={handleSectionChange} 
           />
           <main className="flex-1 p-6 overflow-y-auto bg-gradient-to-br from-black via-gray-900/20 to-black relative">
             {/* Animated background elements */}
