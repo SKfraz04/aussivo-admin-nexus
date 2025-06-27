@@ -31,6 +31,7 @@ import {
   SidebarTrigger,
   SidebarFooter
 } from '@/components/ui/sidebar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import LogoutConfirmDialog from '@/components/auth/LogoutConfirmDialog';
@@ -125,7 +126,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
 
   return (
     <>
-      <Sidebar className="border-r border-emerald-800/30 animate-fade-in fixed left-0 top-0 h-screen flex flex-col z-50 overflow-hidden">
+      <Sidebar className="border-r border-emerald-800/30 animate-fade-in fixed left-0 top-0 h-screen flex flex-col z-50 w-64">
         <SidebarHeader className="p-6 border-b border-emerald-800/30 flex-shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-center animate-scale-in">
@@ -139,43 +140,45 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
           </div>
         </SidebarHeader>
         
-        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm flex-1 overflow-hidden">
-          <div className="h-full flex flex-col">
-            {menuGroups.map((group, groupIndex) => (
-              <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
-                <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
-                  {group.title}
-                </SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {group.items.map((item, itemIndex) => (
-                      <SidebarMenuItem key={item.section} className="animate-fade-in" style={{ animationDelay: `${(groupIndex * 100) + (itemIndex * 50)}ms` }}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={activeSection === item.section}
-                          className={`
-                            w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-300
-                            ${activeSection === item.section 
-                              ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg transform scale-105' 
-                              : 'text-slate-300 hover:text-white hover:bg-slate-800/50 hover:translate-x-1'
-                            }
-                          `}
-                        >
-                          <button onClick={() => setActiveSection(item.section)}>
-                            <item.icon className="w-5 h-5 transition-transform duration-200" />
-                            <span className="font-medium">{item.title}</span>
-                          </button>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-            ))}
-          </div>
+        <SidebarContent className="bg-slate-900/50 backdrop-blur-sm flex-1 min-h-0">
+          <ScrollArea className="h-full">
+            <div className="p-2">
+              {menuGroups.map((group, groupIndex) => (
+                <SidebarGroup key={group.title} className="animate-fade-in" style={{ animationDelay: `${groupIndex * 100}ms` }}>
+                  <SidebarGroupLabel className="text-emerald-400 font-semibold text-xs uppercase tracking-wider">
+                    {group.title}
+                  </SidebarGroupLabel>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {group.items.map((item, itemIndex) => (
+                        <SidebarMenuItem key={item.section} className="animate-fade-in" style={{ animationDelay: `${(groupIndex * 100) + (itemIndex * 50)}ms` }}>
+                          <SidebarMenuButton
+                            asChild
+                            isActive={activeSection === item.section}
+                            className={`
+                              w-full justify-start space-x-3 px-4 py-3 rounded-lg transition-all duration-300
+                              ${activeSection === item.section 
+                                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg transform scale-105' 
+                                : 'text-slate-300 hover:text-white hover:bg-slate-800/50 hover:translate-x-1'
+                              }
+                            `}
+                          >
+                            <button onClick={() => setActiveSection(item.section)}>
+                              <item.icon className="w-5 h-5 transition-transform duration-200" />
+                              <span className="font-medium">{item.title}</span>
+                            </button>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </SidebarGroup>
+              ))}
+            </div>
+          </ScrollArea>
         </SidebarContent>
         
-        <div className="flex-shrink-0 p-4 border-t border-emerald-800/30 bg-slate-900/50 backdrop-blur-sm">
+        <SidebarFooter className="flex-shrink-0 p-4 border-t border-emerald-800/30 bg-slate-900/50 backdrop-blur-sm">
           <div className="glassmorphism rounded-lg p-3 mb-3 animate-fade-in">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
@@ -195,7 +198,7 @@ export function AdminSidebar({ activeSection, setActiveSection }: AdminSidebarPr
             <LogOut className="h-5 w-5" />
             <span className="font-medium">Logout</span>
           </Button>
-        </div>
+        </SidebarFooter>
       </Sidebar>
 
       <LogoutConfirmDialog
