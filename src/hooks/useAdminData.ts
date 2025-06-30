@@ -1,6 +1,5 @@
-
 import { useState, useMemo } from 'react';
-import { User, Transaction, FilterState } from '@/types/admin';
+import { User, Transaction, FilterState, WalletAdjustment } from '@/types/admin';
 
 const mockUsers: User[] = [
   {
@@ -12,7 +11,15 @@ const mockUsers: User[] = [
     status: 'Active',
     registrationDate: '2024-01-15',
     lastLogin: '2024-06-24T10:28:00Z',
-    kycStatus: 'Verified'
+    kycStatus: 'Verified',
+    walletAddress: '0xc4584cb684e85020392e920bb7d82b77286c21ec',
+    lockPeriod: '6 Months',
+    asvoBalance: '12,500',
+    asvoRewardBalance: '0',
+    asvoReferralBalance: '0',
+    usdtBep20Balance: '15,420.50',
+    usdtTrc20Balance: '0',
+    asvoStakedBalance: '10,000'
   },
   {
     userId: 'USR_002',
@@ -23,7 +30,15 @@ const mockUsers: User[] = [
     status: 'Active',
     registrationDate: '2024-02-20',
     lastLogin: '2024-06-23T15:45:00Z',
-    kycStatus: 'Pending'
+    kycStatus: 'Pending',
+    walletAddress: '0x3351eac1afa5bac025db6b7504f6a80e102c47e',
+    lockPeriod: '6 Months',
+    asvoBalance: '7,200',
+    asvoRewardBalance: '0',
+    asvoReferralBalance: '0',
+    usdtBep20Balance: '8,750.25',
+    usdtTrc20Balance: '0',
+    asvoStakedBalance: '5,000'
   },
   {
     userId: 'USR_003',
@@ -34,7 +49,16 @@ const mockUsers: User[] = [
     status: 'Suspended',
     registrationDate: '2024-01-08',
     lastLogin: '2024-06-22T09:15:00Z',
-    kycStatus: 'Verified'
+    kycStatus: 'Verified',
+    walletAddress: '0x92d131bff59d074944cde73c4026ce476007904',
+    lockPeriod: '6 Months',
+    asvoBalance: '20,150',
+    asvoRewardBalance: '0',
+    asvoReferralBalance: '0',
+    usdtBep20Balance: '25,680.75',
+    usdtTrc20Balance: '0',
+    asvoStakedBalance: '18,000',
+    suspendedUntil: '2024-07-01'
   },
   {
     userId: 'USR_004',
@@ -42,10 +66,18 @@ const mockUsers: User[] = [
     totalBalance: '$3,200.00',
     totalASVO: '2,800 ASVO',
     stakedASVO: '2,000 ASVO',
-    status: 'Active',
+    status: 'Terminated',
     registrationDate: '2024-03-10',
     lastLogin: '2025-05-22T18:28:00Z',
-    kycStatus: 'Pending'
+    kycStatus: 'Pending',
+    walletAddress: '0x7aeac6396852650ab7a0b263fe8cf8ea968bba',
+    lockPeriod: '6 Months',
+    asvoBalance: '2,800',
+    asvoRewardBalance: '0',
+    asvoReferralBalance: '0',
+    usdtBep20Balance: '3,200.00',
+    usdtTrc20Balance: '0',
+    asvoStakedBalance: '2,000'
   }
 ];
 
@@ -110,9 +142,33 @@ const mockReferrals = [
   { id: 3, userId: 'USR_001', referredUserId: 'USR_004', commission: 125 }
 ];
 
+const mockWalletAdjustments: WalletAdjustment[] = [
+  {
+    id: 'ADJ_001',
+    walletAddress: '0x92d131bff59d074944cde73c4026ce476007904',
+    operation: 'Debit',
+    currency: 'USDT',
+    amount: 0.00,
+    reason: 'testing',
+    timestamp: 'Jun 18, 2025 12:58 PM',
+    status: 'Success'
+  },
+  {
+    id: 'ADJ_002',
+    walletAddress: '0x92d131bff59d074944cde73c4026ce476007904',
+    operation: 'Credit',
+    currency: 'USDT',
+    amount: 0.00,
+    reason: 'testing',
+    timestamp: 'Jun 18, 2025 12:56 PM',
+    status: 'Success'
+  }
+];
+
 export const useAdminData = () => {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [transactions, setTransactions] = useState<Transaction[]>(mockTransactions);
+  const [walletAdjustments, setWalletAdjustments] = useState<WalletAdjustment[]>(mockWalletAdjustments);
   const [stakingPackages] = useState(mockStakingPackages);
   const [referrals] = useState(mockReferrals);
   const [userFilters, setUserFilters] = useState<FilterState>({
@@ -166,10 +222,60 @@ export const useAdminData = () => {
     });
   }, [transactions, transactionFilters]);
 
-  const updateUserStatus = (userId: string, newStatus: User['status']) => {
+  const updateUserStatus = (userId: string, newStatus: User['status'], suspendedUntil?: string) => {
     setUsers(prev => prev.map(user => 
-      user.userId === userId ? { ...user, status: newStatus } : user
+      user.userId === userId ? { 
+        ...user, 
+        status: newStatus,
+        suspendedUntil: suspendedUntil 
+      } : user
     ));
+  };
+
+  const updateUserEmail = (userId: string, newEmail: string) => {
+    setUsers(prev => prev.map(user => 
+      user.userId === userId ? { ...user, email: newEmail } : user
+    ));
+  };
+
+  const addWalletAdjustment = (adjustment: Omit<WalletAdjustment, 'id' | 'timestamp'>) => {
+    const newAdjustment: WalletAdjustment = {
+      ...adjustment,
+      id: `ADJ_${Date.now()}`,
+      timestamp: new Date().toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      })
+    };
+    setWalletAdjustments(prev => [newAdjustment, ...prev]);
+    
+    // Update user balance
+    setUsers(prev => prev.map(user => {
+      if (user.walletAddress === adjustment.walletAddress) {
+        const updatedUser = { ...user };
+        if (adjustment.currency === 'USDT') {
+          const currentBalance = parseFloat(user.usdtBep20Balance?.replace(',', '') || '0');
+          const newBalance = adjustment.operation === 'Credit' 
+            ? currentBalance + adjustment.amount 
+            : currentBalance - adjustment.amount;
+          updatedUser.usdtBep20Balance = newBalance.toLocaleString('en-US', { minimumFractionDigits: 2 });
+          updatedUser.totalBalance = `$${newBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+        } else if (adjustment.currency === 'ASVO') {
+          const currentBalance = parseFloat(user.asvoBalance?.replace(',', '') || '0');
+          const newBalance = adjustment.operation === 'Credit' 
+            ? currentBalance + adjustment.amount 
+            : currentBalance - adjustment.amount;
+          updatedUser.asvoBalance = newBalance.toLocaleString('en-US');
+          updatedUser.totalASVO = `${newBalance.toLocaleString('en-US')} ASVO`;
+        }
+        return updatedUser;
+      }
+      return user;
+    }));
   };
 
   const updateTransactionStatus = (txId: string, newStatus: Transaction['status']) => {
@@ -181,6 +287,7 @@ export const useAdminData = () => {
   return {
     users: filteredUsers,
     transactions: filteredTransactions,
+    walletAdjustments,
     stakingPackages,
     referrals,
     userFilters,
@@ -188,6 +295,8 @@ export const useAdminData = () => {
     setUserFilters,
     setTransactionFilters,
     updateUserStatus,
+    updateUserEmail,
+    addWalletAdjustment,
     updateTransactionStatus,
     allUsers: users,
     allTransactions: transactions
