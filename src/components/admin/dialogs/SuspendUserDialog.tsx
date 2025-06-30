@@ -46,39 +46,39 @@ export function SuspendUserDialog({ user, open, onOpenChange, onSave }: SuspendU
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-slate-800 border-emerald-800/30 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-orange-600">
+          <DialogTitle className="flex items-center gap-2 text-orange-400">
             <Ban className="h-5 w-5" />
             Suspend User
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-400">
             Temporarily suspend this user's access to the platform.
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
-          <div className="flex items-start gap-3 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-            <AlertTriangle className="h-4 w-4 text-orange-600 mt-0.5 flex-shrink-0" />
+          <div className="flex items-start gap-3 p-3 bg-orange-600/10 border border-orange-600/30 rounded-lg">
+            <AlertTriangle className="h-4 w-4 text-orange-400 mt-0.5 flex-shrink-0" />
             <div className="space-y-1">
-              <p className="text-sm font-medium text-orange-800">Suspension Notice</p>
-              <p className="text-sm text-orange-700">
+              <p className="text-sm font-medium text-orange-300">Suspension Notice</p>
+              <p className="text-sm text-orange-400">
                 The user will lose access immediately. Leave the date empty for indefinite suspension.
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="suspendedUntil">Suspend Until (Optional)</Label>
+            <Label htmlFor="suspendedUntil" className="text-slate-300">Suspend Until (Optional)</Label>
             <Input
               id="suspendedUntil"
               type="date"
               value={suspendedUntil}
               onChange={(e) => setSuspendedUntil(e.target.value)}
               min={minDate}
-              className="w-full"
+              className="w-full bg-slate-900 border-slate-700 text-white focus:border-emerald-500"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-400">
               If no date is selected, suspension will be indefinite
             </p>
           </div>
@@ -88,13 +88,13 @@ export function SuspendUserDialog({ user, open, onOpenChange, onSave }: SuspendU
           <Button
             variant="outline"
             onClick={handleClose}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-slate-700 border-slate-600 text-slate-300 hover:bg-slate-600 hover:text-white"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700"
+            className="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white"
           >
             Suspend User
           </Button>

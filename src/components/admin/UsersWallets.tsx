@@ -154,10 +154,10 @@ export function UsersWallets() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      'Active': 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20',
-      'Suspended': 'bg-orange-500/10 text-orange-500 border-orange-500/20 hover:bg-orange-500/20',
-      'Terminated': 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20',
-      'Inactive': 'bg-slate-500/10 text-slate-500 border-slate-500/20 hover:bg-slate-500/20'
+      'Active': 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50',
+      'Suspended': 'bg-orange-600/20 text-orange-400 border-orange-600/50',
+      'Terminated': 'bg-red-600/20 text-red-400 border-red-600/50',
+      'Inactive': 'bg-slate-600/20 text-slate-400 border-slate-600/50'
     };
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.Inactive;
   };
@@ -174,12 +174,12 @@ export function UsersWallets() {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="space-y-6 p-4 md:p-6">
+    <div className="min-h-screen bg-slate-900 text-white p-4 md:p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">User & Wallet Management</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl text-white">User & Wallet Management</h1>
+          <p className="text-slate-400">
             Manage platform users, their wallets, and account settings
           </p>
         </div>
@@ -187,7 +187,7 @@ export function UsersWallets() {
           <Button 
             variant="outline" 
             onClick={() => setShowWalletHistory(true)}
-            className="justify-start sm:justify-center"
+            className="justify-start sm:justify-center bg-slate-800 border-emerald-800/50 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
           >
             <DollarSign className="mr-2 h-4 w-4" />
             Wallet History
@@ -195,7 +195,7 @@ export function UsersWallets() {
           <Button 
             variant="outline" 
             onClick={handleExport}
-            className="justify-start sm:justify-center"
+            className="justify-start sm:justify-center bg-slate-800 border-emerald-800/50 text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
           >
             <Download className="mr-2 h-4 w-4" />
             Export CSV
@@ -205,48 +205,48 @@ export function UsersWallets() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Card>
+        <Card className="bg-slate-800 border-emerald-800/30">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center space-x-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-emerald-400" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
-                <p className="text-xl font-bold md:text-2xl">{statusCounts.total}</p>
+                <p className="text-sm font-medium text-slate-400">Total Users</p>
+                <p className="text-xl font-bold md:text-2xl text-white">{statusCounts.total}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800 border-emerald-800/30">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center space-x-2">
               <CheckCircle className="h-4 w-4 text-emerald-500" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Active</p>
+                <p className="text-sm font-medium text-slate-400">Active</p>
                 <p className="text-xl font-bold text-emerald-500 md:text-2xl">{statusCounts.active}</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-slate-800 border-emerald-800/30">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center space-x-2">
               <Clock className="h-4 w-4 text-orange-500" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Suspended</p>
+                <p className="text-sm font-medium text-slate-400">Suspended</p>
                 <p className="text-xl font-bold text-orange-500 md:text-2xl">{statusCounts.suspended}</p>
               </div>
             </div>
           </CardContent>
         </Card>
         
-        <Card>
+        <Card className="bg-slate-800 border-emerald-800/30">
           <CardContent className="p-4 md:p-6">
             <div className="flex items-center space-x-2">
               <XCircle className="h-4 w-4 text-red-500" />
               <div className="space-y-1">
-                <p className="text-sm font-medium text-muted-foreground">Terminated</p>
+                <p className="text-sm font-medium text-slate-400">Terminated</p>
                 <p className="text-xl font-bold text-red-500 md:text-2xl">{statusCounts.terminated}</p>
               </div>
             </div>
@@ -255,17 +255,17 @@ export function UsersWallets() {
       </div>
 
       {/* Filters */}
-      <Card>
+      <Card className="bg-slate-800 border-emerald-800/30">
         <CardContent className="p-4 md:p-6">
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 placeholder="Search by wallet address, email, or user ID..."
                 value={userFilters.searchTerm}
                 onChange={(e) => setUserFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
-                className="pl-9"
+                className="pl-9 bg-slate-900 border-slate-700 text-white placeholder-slate-400 focus:border-emerald-500"
               />
             </div>
 
@@ -275,11 +275,11 @@ export function UsersWallets() {
               onValueChange={(value) => setUserFilters(prev => ({ ...prev, statusFilter: value }))}
               className="w-full"
             >
-              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-                <TabsTrigger value="all" className="text-xs md:text-sm">All Users</TabsTrigger>
-                <TabsTrigger value="active" className="text-xs md:text-sm">Active</TabsTrigger>
-                <TabsTrigger value="suspended" className="text-xs md:text-sm">Suspended</TabsTrigger>
-                <TabsTrigger value="terminated" className="text-xs md:text-sm">Terminated</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 bg-slate-900">
+                <TabsTrigger value="all" className="text-xs md:text-sm data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">All Users</TabsTrigger>
+                <TabsTrigger value="active" className="text-xs md:text-sm data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">Active</TabsTrigger>
+                <TabsTrigger value="suspended" className="text-xs md:text-sm data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">Suspended</TabsTrigger>
+                <TabsTrigger value="terminated" className="text-xs md:text-sm data-[state=active]:bg-emerald-600/20 data-[state=active]:text-emerald-400">Terminated</TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
@@ -287,35 +287,35 @@ export function UsersWallets() {
       </Card>
 
       {/* Users Table */}
-      <Card>
+      <Card className="bg-slate-800 border-emerald-800/30">
         <CardHeader className="px-4 py-4 md:px-6">
-          <CardTitle className="text-lg md:text-xl">Users ({users.length})</CardTitle>
+          <CardTitle className="text-lg md:text-xl text-white">Users ({users.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="min-w-[200px]">Wallet Address</TableHead>
-                  <TableHead className="min-w-[100px]">Status</TableHead>
-                  <TableHead className="hidden md:table-cell min-w-[120px]">Referral Level</TableHead>
-                  <TableHead className="hidden lg:table-cell min-w-[140px]">Staking Package</TableHead>
-                  <TableHead className="hidden sm:table-cell min-w-[120px]">Registration</TableHead>
-                  <TableHead className="w-[70px]">Actions</TableHead>
+                <TableRow className="border-slate-700 hover:bg-slate-700/50">
+                  <TableHead className="min-w-[200px] text-slate-300">Wallet Address</TableHead>
+                  <TableHead className="min-w-[100px] text-slate-300">Status</TableHead>
+                  <TableHead className="hidden md:table-cell min-w-[120px] text-slate-300">Referral Level</TableHead>
+                  <TableHead className="hidden lg:table-cell min-w-[140px] text-slate-300">Staking Package</TableHead>
+                  <TableHead className="hidden sm:table-cell min-w-[120px] text-slate-300">Registration</TableHead>
+                  <TableHead className="w-[70px] text-slate-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((user) => (
-                  <TableRow key={user.userId} className="hover:bg-muted/50">
+                  <TableRow key={user.userId} className="hover:bg-slate-700/50 border-slate-700">
                     <TableCell>
                       <div className="space-y-1">
-                        <div className="font-mono text-sm">
+                        <div className="font-mono text-sm text-white">
                           {user.walletAddress ? 
                             `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}` 
                             : 'N/A'
                           }
                         </div>
-                        <div className="text-xs text-muted-foreground md:hidden">
+                        <div className="text-xs text-slate-400 md:hidden">
                           {user.email}
                         </div>
                       </div>
@@ -326,12 +326,12 @@ export function UsersWallets() {
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden md:table-cell">
-                      <span className="text-muted-foreground">Level 1</span>
+                      <span className="text-slate-400">Level 1</span>
                     </TableCell>
                     <TableCell className="hidden lg:table-cell">
-                      <span className="text-muted-foreground">Basic</span>
+                      <span className="text-slate-400">Basic</span>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                    <TableCell className="hidden sm:table-cell text-sm text-slate-400">
                       {new Date(user.registrationDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
@@ -340,35 +340,35 @@ export function UsersWallets() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 text-slate-400 hover:text-white hover:bg-slate-700"
                           >
                             <MoreVertical className="h-4 w-4" />
                             <span className="sr-only">Open actions menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem onClick={() => handleViewDetails(user)}>
+                        <DropdownMenuContent align="end" className="w-48 bg-slate-800 border-slate-700">
+                          <DropdownMenuItem onClick={() => handleViewDetails(user)} className="text-slate-300 hover:bg-slate-700 hover:text-white">
                             <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                          <DropdownMenuItem onClick={() => handleEditUser(user)} className="text-slate-300 hover:bg-slate-700 hover:text-white">
                             <Edit className="mr-2 h-4 w-4" />
                             Edit User
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleAdjustWallet(user)}>
+                          <DropdownMenuItem onClick={() => handleAdjustWallet(user)} className="text-slate-300 hover:bg-slate-700 hover:text-white">
                             <DollarSign className="mr-2 h-4 w-4" />
                             Adjust Wallet
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          <DropdownMenuSeparator className="bg-slate-700" />
                           {user.status === 'Active' && (
                             <>
-                              <DropdownMenuItem onClick={() => handleSuspendUser(user)}>
+                              <DropdownMenuItem onClick={() => handleSuspendUser(user)} className="text-slate-300 hover:bg-slate-700 hover:text-white">
                                 <Ban className="mr-2 h-4 w-4" />
                                 Suspend User
                               </DropdownMenuItem>
                               <DropdownMenuItem 
                                 onClick={() => handleStatusUpdate(user.userId, 'Terminated')}
-                                className="text-red-600 focus:text-red-600"
+                                className="text-red-400 hover:bg-slate-700 hover:text-red-300"
                               >
                                 <XCircle className="mr-2 h-4 w-4" />
                                 Terminate User
@@ -378,7 +378,7 @@ export function UsersWallets() {
                           {(user.status === 'Suspended' || user.status === 'Terminated') && (
                             <DropdownMenuItem 
                               onClick={() => handleStatusUpdate(user.userId, 'Active')}
-                              className="text-emerald-600 focus:text-emerald-600"
+                              className="text-emerald-400 hover:bg-slate-700 hover:text-emerald-300"
                             >
                               <CheckCircle className="mr-2 h-4 w-4" />
                               Activate User
@@ -393,8 +393,8 @@ export function UsersWallets() {
                   <TableRow>
                     <TableCell colSpan={6} className="h-24 text-center">
                       <div className="flex flex-col items-center space-y-2">
-                        <UserX className="h-8 w-8 text-muted-foreground" />
-                        <p className="text-muted-foreground">No users found</p>
+                        <UserX className="h-8 w-8 text-slate-400" />
+                        <p className="text-slate-400">No users found</p>
                       </div>
                     </TableCell>
                   </TableRow>
