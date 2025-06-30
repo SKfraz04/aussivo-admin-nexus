@@ -4,21 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Search, 
-  Filter, 
-  MoreHorizontal, 
-  UserCheck, 
-  UserX, 
   Download,
-  Plus,
   Eye,
   Edit,
   DollarSign,
   Ban,
   XCircle,
-  CheckCircle
+  CheckCircle,
+  Users,
+  UserCheck,
+  UserX,
+  Clock,
+  MoreVertical
 } from 'lucide-react';
 import {
   Table,
@@ -29,24 +28,18 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { useAdminData } from '@/hooks/useAdminData';
 import { useToast } from '@/hooks/use-toast';
 import { User } from '@/types/admin';
@@ -161,32 +154,12 @@ export function UsersWallets() {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      'Active': 'bg-emerald-600/20 text-emerald-400 border-emerald-600/50',
-      'Suspended': 'bg-orange-600/20 text-orange-400 border-orange-600/50',
-      'Terminated': 'bg-red-600/20 text-red-400 border-red-600/50',
-      'Inactive': 'bg-slate-600/20 text-slate-400 border-slate-600/50'
+      'Active': 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/20',
+      'Suspended': 'bg-orange-500/10 text-orange-500 border-orange-500/20 hover:bg-orange-500/20',
+      'Terminated': 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20',
+      'Inactive': 'bg-slate-500/10 text-slate-500 border-slate-500/20 hover:bg-slate-500/20'
     };
     return statusConfig[status as keyof typeof statusConfig] || statusConfig.Inactive;
-  };
-
-  const formatLastLogin = (dateString: string) => {
-    const date = new Date(dateString);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
-  };
-
-  const resetFilters = () => {
-    setUserFilters({
-      searchTerm: '',
-      statusFilter: 'all',
-      typeFilter: 'all',
-      verificationFilter: 'all',
-      tokenFilter: 'all'
-    });
-    toast({
-      title: "Filters Reset",
-      description: "All filters have been cleared.",
-    });
   };
 
   const getStatusCounts = () => {
@@ -201,232 +174,213 @@ export function UsersWallets() {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 p-4 md:p-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white">User & Wallet Management</h1>
-          <p className="text-slate-400">Manage platform users and their wallets</p>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="space-y-1">
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">User & Wallet Management</h1>
+          <p className="text-muted-foreground">
+            Manage platform users, their wallets, and account settings
+          </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Button 
             variant="outline" 
-            className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20"
             onClick={() => setShowWalletHistory(true)}
+            className="justify-start sm:justify-center"
           >
-            <DollarSign className="h-4 w-4 mr-2" />
+            <DollarSign className="mr-2 h-4 w-4" />
             Wallet History
           </Button>
           <Button 
             variant="outline" 
-            className="border-emerald-600/50 text-emerald-400 hover:bg-emerald-600/20"
             onClick={handleExport}
+            className="justify-start sm:justify-center"
           >
-            <Download className="h-4 w-4 mr-2" />
-            Export
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
           </Button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-white">{statusCounts.total}</p>
-                <p className="text-slate-300 text-sm">All Users</p>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <Card>
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center space-x-2">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Total Users</p>
+                <p className="text-xl font-bold md:text-2xl">{statusCounts.total}</p>
               </div>
-              <UserCheck className="h-5 w-5 text-emerald-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-emerald-400">{statusCounts.active}</p>
-                <p className="text-slate-300 text-sm">Active</p>
+        <Card>
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="h-4 w-4 text-emerald-500" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Active</p>
+                <p className="text-xl font-bold text-emerald-500 md:text-2xl">{statusCounts.active}</p>
               </div>
-              <CheckCircle className="h-5 w-5 text-emerald-400" />
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-orange-400">{statusCounts.suspended}</p>
-                <p className="text-slate-300 text-sm">Suspended</p>
+        <Card>
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center space-x-2">
+              <Clock className="h-4 w-4 text-orange-500" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Suspended</p>
+                <p className="text-xl font-bold text-orange-500 md:text-2xl">{statusCounts.suspended}</p>
               </div>
-              <Ban className="h-5 w-5 text-orange-400" />
             </div>
           </CardContent>
         </Card>
         
-        <Card className="glassmorphism border-emerald-800/30">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-2xl font-bold text-red-400">{statusCounts.terminated}</p>
-                <p className="text-slate-300 text-sm">Terminated</p>
+        <Card>
+          <CardContent className="p-4 md:p-6">
+            <div className="flex items-center space-x-2">
+              <XCircle className="h-4 w-4 text-red-500" />
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Terminated</p>
+                <p className="text-xl font-bold text-red-500 md:text-2xl">{statusCounts.terminated}</p>
               </div>
-              <XCircle className="h-5 w-5 text-red-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center gap-2 p-1 bg-slate-800/50 rounded-lg">
-        <Button
-          variant={userFilters.statusFilter === 'all' ? 'default' : 'ghost'}
-          size="sm"
-          className={userFilters.statusFilter === 'all' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-slate-400 hover:text-white'}
-          onClick={() => setUserFilters(prev => ({ ...prev, statusFilter: 'all' }))}
-        >
-          All Users
-        </Button>
-        <Button
-          variant={userFilters.statusFilter === 'active' ? 'default' : 'ghost'}
-          size="sm"
-          className={userFilters.statusFilter === 'active' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-slate-400 hover:text-white'}
-          onClick={() => setUserFilters(prev => ({ ...prev, statusFilter: 'active' }))}
-        >
-          Active
-        </Button>
-        <Button
-          variant={userFilters.statusFilter === 'suspended' ? 'default' : 'ghost'}
-          size="sm"
-          className={userFilters.statusFilter === 'suspended' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-slate-400 hover:text-white'}
-          onClick={() => setUserFilters(prev => ({ ...prev, statusFilter: 'suspended' }))}
-        >
-          Suspended
-        </Button>
-        <Button
-          variant={userFilters.statusFilter === 'terminated' ? 'default' : 'ghost'}
-          size="sm"
-          className={userFilters.statusFilter === 'terminated' ? 'bg-emerald-600 hover:bg-emerald-700' : 'text-slate-400 hover:text-white'}
-          onClick={() => setUserFilters(prev => ({ ...prev, statusFilter: 'terminated' }))}
-        >
-          Terminated
-        </Button>
-      </div>
+      {/* Filters */}
+      <Card>
+        <CardContent className="p-4 md:p-6">
+          <div className="space-y-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search by wallet address, email, or user ID..."
+                value={userFilters.searchTerm}
+                onChange={(e) => setUserFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
+                className="pl-9"
+              />
+            </div>
 
-      {/* Search */}
-      <Card className="glassmorphism border-emerald-800/30">
-        <CardContent className="p-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              placeholder="Search by Wallet Address..."
-              value={userFilters.searchTerm}
-              onChange={(e) => setUserFilters(prev => ({ ...prev, searchTerm: e.target.value }))}
-              className="pl-9 bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
-            />
+            {/* Status Filter Tabs */}
+            <Tabs 
+              value={userFilters.statusFilter} 
+              onValueChange={(value) => setUserFilters(prev => ({ ...prev, statusFilter: value }))}
+              className="w-full"
+            >
+              <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+                <TabsTrigger value="all" className="text-xs md:text-sm">All Users</TabsTrigger>
+                <TabsTrigger value="active" className="text-xs md:text-sm">Active</TabsTrigger>
+                <TabsTrigger value="suspended" className="text-xs md:text-sm">Suspended</TabsTrigger>
+                <TabsTrigger value="terminated" className="text-xs md:text-sm">Terminated</TabsTrigger>
+              </TabsList>
+            </Tabs>
           </div>
         </CardContent>
       </Card>
 
       {/* Users Table */}
-      <Card className="glassmorphism border-emerald-800/30">
+      <Card>
+        <CardHeader className="px-4 py-4 md:px-6">
+          <CardTitle className="text-lg md:text-xl">Users ({users.length})</CardTitle>
+        </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-hidden">
+          <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-emerald-800/30 bg-slate-800/30">
-                  <TableHead className="text-slate-300 font-semibold">Wallet Address</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">Status</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">Referral Level</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">Staking Package</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">Registration Date</TableHead>
-                  <TableHead className="text-slate-300 font-semibold">Action</TableHead>
+                <TableRow>
+                  <TableHead className="min-w-[200px]">Wallet Address</TableHead>
+                  <TableHead className="min-w-[100px]">Status</TableHead>
+                  <TableHead className="hidden md:table-cell min-w-[120px]">Referral Level</TableHead>
+                  <TableHead className="hidden lg:table-cell min-w-[140px]">Staking Package</TableHead>
+                  <TableHead className="hidden sm:table-cell min-w-[120px]">Registration</TableHead>
+                  <TableHead className="w-[70px]">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {users.map((user) => (
-                  <TableRow key={user.userId} className="border-emerald-800/20 hover:bg-slate-800/30 transition-colors">
+                  <TableRow key={user.userId} className="hover:bg-muted/50">
                     <TableCell>
-                      <div className="font-mono text-sm text-white">
-                        {user.walletAddress ? 
-                          `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}` 
-                          : 'N/A'
-                        }
+                      <div className="space-y-1">
+                        <div className="font-mono text-sm">
+                          {user.walletAddress ? 
+                            `${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}` 
+                            : 'N/A'
+                          }
+                        </div>
+                        <div className="text-xs text-muted-foreground md:hidden">
+                          {user.email}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge className={getStatusBadge(user.status)}>
+                      <Badge variant="outline" className={getStatusBadge(user.status)}>
                         {user.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <span className="text-emerald-400">N/A</span>
+                    <TableCell className="hidden md:table-cell">
+                      <span className="text-muted-foreground">Level 1</span>
                     </TableCell>
-                    <TableCell>
-                      <span className="text-slate-400">N/A</span>
+                    <TableCell className="hidden lg:table-cell">
+                      <span className="text-muted-foreground">Basic</span>
                     </TableCell>
-                    <TableCell className="text-slate-300 text-sm">
-                      {formatLastLogin(user.registrationDate)}
+                    <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
+                      {new Date(user.registrationDate).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
-                            size="sm"
                             variant="ghost"
-                            className="text-slate-400 hover:text-white"
+                            size="sm"
+                            className="h-8 w-8 p-0"
                           >
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreVertical className="h-4 w-4" />
+                            <span className="sr-only">Open actions menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="bg-slate-800 border-emerald-800/30 min-w-[160px]">
-                          <DropdownMenuItem 
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                            onClick={() => handleViewDetails(user)}
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem onClick={() => handleViewDetails(user)}>
+                            <Eye className="mr-2 h-4 w-4" />
                             View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                            onClick={() => handleEditUser(user)}
-                          >
-                            <Edit className="h-4 w-4 mr-2" />
+                          <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit User
                           </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-slate-300 hover:text-white hover:bg-slate-700"
-                            onClick={() => handleAdjustWallet(user)}
-                          >
-                            <DollarSign className="h-4 w-4 mr-2" />
+                          <DropdownMenuItem onClick={() => handleAdjustWallet(user)}>
+                            <DollarSign className="mr-2 h-4 w-4" />
                             Adjust Wallet
                           </DropdownMenuItem>
+                          <DropdownMenuSeparator />
                           {user.status === 'Active' && (
-                            <DropdownMenuItem 
-                              className="text-slate-300 hover:text-white hover:bg-slate-700"
-                              onClick={() => handleSuspendUser(user)}
-                            >
-                              <Ban className="h-4 w-4 mr-2" />
-                              Suspend User
-                            </DropdownMenuItem>
-                          )}
-                          {user.status === 'Active' && (
-                            <DropdownMenuItem 
-                              className="text-slate-300 hover:text-white hover:bg-slate-700"
-                              onClick={() => handleStatusUpdate(user.userId, 'Terminated')}
-                            >
-                              <XCircle className="h-4 w-4 mr-2" />
-                              Terminate User
-                            </DropdownMenuItem>
+                            <>
+                              <DropdownMenuItem onClick={() => handleSuspendUser(user)}>
+                                <Ban className="mr-2 h-4 w-4" />
+                                Suspend User
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => handleStatusUpdate(user.userId, 'Terminated')}
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <XCircle className="mr-2 h-4 w-4" />
+                                Terminate User
+                              </DropdownMenuItem>
+                            </>
                           )}
                           {(user.status === 'Suspended' || user.status === 'Terminated') && (
                             <DropdownMenuItem 
-                              className="text-slate-300 hover:text-white hover:bg-slate-700"
                               onClick={() => handleStatusUpdate(user.userId, 'Active')}
+                              className="text-emerald-600 focus:text-emerald-600"
                             >
-                              <CheckCircle className="h-4 w-4 mr-2" />
+                              <CheckCircle className="mr-2 h-4 w-4" />
                               Activate User
                             </DropdownMenuItem>
                           )}
@@ -435,6 +389,16 @@ export function UsersWallets() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {users.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      <div className="flex flex-col items-center space-y-2">
+                        <UserX className="h-8 w-8 text-muted-foreground" />
+                        <p className="text-muted-foreground">No users found</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </div>
