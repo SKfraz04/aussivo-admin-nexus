@@ -53,30 +53,32 @@ export function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDia
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-slate-800 border-slate-700 text-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-emerald-400">
             <Mail className="h-5 w-5" />
             Edit User
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-400">
             Update the user's email address. This will be their new login credential.
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email" className="text-slate-300">Email Address</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => handleEmailChange(e.target.value)}
               placeholder="Enter email address"
-              className={!isValid ? "border-red-500 focus:border-red-500" : ""}
+              className={`bg-slate-900 border-slate-600 text-white placeholder:text-slate-400 ${
+                !isValid ? "border-red-500 focus:border-red-500" : "focus:border-emerald-500"
+              }`}
             />
             {!isValid && (
-              <p className="text-sm text-red-500">Please enter a valid email address</p>
+              <p className="text-sm text-red-400">Please enter a valid email address</p>
             )}
           </div>
         </div>
@@ -85,14 +87,14 @@ export function EditUserDialog({ user, open, onOpenChange, onSave }: EditUserDia
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={!email.trim() || !isValid}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white"
           >
             Update Email
           </Button>
