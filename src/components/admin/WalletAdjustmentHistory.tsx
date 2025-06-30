@@ -46,13 +46,13 @@ export function WalletAdjustmentHistory({ open, onOpenChange }: WalletAdjustment
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[85vh] flex flex-col bg-slate-800 border-slate-700 text-white">
+      <DialogContent className="max-w-6xl max-h-[85vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-emerald-400">
+          <DialogTitle className="flex items-center gap-2">
             <History className="h-5 w-5" />
             Manual Token Allocation History
           </DialogTitle>
-          <DialogDescription className="text-slate-400">
+          <DialogDescription>
             Complete log of all manual wallet adjustments and token allocations
           </DialogDescription>
         </DialogHeader>
@@ -60,72 +60,72 @@ export function WalletAdjustmentHistory({ open, onOpenChange }: WalletAdjustment
         <div className="space-y-4 flex-1 overflow-hidden">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search by wallet address..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 bg-slate-900 border-slate-600 text-white placeholder:text-slate-400"
+              className="pl-9"
             />
           </div>
 
           {/* Table */}
-          <Card className="flex-1 overflow-hidden bg-slate-900 border-slate-700">
+          <Card className="flex-1 overflow-hidden">
             <CardContent className="p-0 h-full">
               <div className="overflow-auto max-h-[50vh]">
                 <Table>
-                  <TableHeader className="sticky top-0 bg-slate-900">
-                    <TableRow className="border-slate-700">
-                      <TableHead className="min-w-[120px] text-slate-300">Date & Time</TableHead>
-                      <TableHead className="min-w-[200px] text-slate-300">Wallet Address</TableHead>
-                      <TableHead className="min-w-[100px] text-slate-300">Operation</TableHead>
-                      <TableHead className="min-w-[80px] text-slate-300">Currency</TableHead>
-                      <TableHead className="min-w-[100px] text-right text-slate-300">Amount</TableHead>
-                      <TableHead className="min-w-[200px] text-slate-300">Reason</TableHead>
+                  <TableHeader className="sticky top-0 bg-background">
+                    <TableRow>
+                      <TableHead className="min-w-[120px]">Date & Time</TableHead>
+                      <TableHead className="min-w-[200px]">Wallet Address</TableHead>
+                      <TableHead className="min-w-[100px]">Operation</TableHead>
+                      <TableHead className="min-w-[80px]">Currency</TableHead>
+                      <TableHead className="min-w-[100px] text-right">Amount</TableHead>
+                      <TableHead className="min-w-[200px]">Reason</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredAdjustments.map((adjustment) => (
-                      <TableRow key={adjustment.id} className="hover:bg-slate-800/50 border-slate-700">
-                        <TableCell className="text-sm text-slate-300">
+                      <TableRow key={adjustment.id} className="hover:bg-muted/50">
+                        <TableCell className="text-sm">
                           {formatDate(adjustment.timestamp)}
                         </TableCell>
                         <TableCell>
-                          <span className="font-mono text-sm text-emerald-400">
+                          <span className="font-mono text-sm">
                             {adjustment.walletAddress.slice(0, 8)}...{adjustment.walletAddress.slice(-6)}
                           </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {adjustment.operation === 'Credit' ? (
-                              <TrendingUp className="h-4 w-4 text-emerald-400" />
+                              <TrendingUp className="h-4 w-4 text-emerald-500" />
                             ) : (
-                              <TrendingDown className="h-4 w-4 text-red-400" />
+                              <TrendingDown className="h-4 w-4 text-red-500" />
                             )}
-                            <span className={adjustment.operation === 'Credit' ? 'text-emerald-400' : 'text-red-400'}>
+                            <span className={adjustment.operation === 'Credit' ? 'text-emerald-600' : 'text-red-600'}>
                               {adjustment.operation}
                             </span>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono bg-slate-800 border-slate-600 text-slate-300">
+                          <Badge variant="outline" className="font-mono">
                             {adjustment.currency}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right font-mono font-medium text-white">
+                        <TableCell className="text-right font-mono font-medium">
                           {adjustment.amount.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-sm text-slate-400 max-w-[200px] truncate">
+                        <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
                           {adjustment.reason}
                         </TableCell>
                       </TableRow>
                     ))}
                     {filteredAdjustments.length === 0 && (
-                      <TableRow className="border-slate-700">
+                      <TableRow>
                         <TableCell colSpan={6} className="h-24 text-center">
                           <div className="flex flex-col items-center space-y-2">
-                            <History className="h-8 w-8 text-slate-400" />
-                            <p className="text-slate-400">
+                            <History className="h-8 w-8 text-muted-foreground" />
+                            <p className="text-muted-foreground">
                               {searchTerm ? 'No matching adjustments found' : 'No wallet adjustments yet'}
                             </p>
                           </div>
