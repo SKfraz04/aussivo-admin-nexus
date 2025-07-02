@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -92,8 +92,8 @@ export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditin
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
         {isEditing ? (
           <Button size="sm" variant="outline" className="border-emerald-800/30 text-emerald-400 hover:bg-emerald-900/20">
             Edit
@@ -104,14 +104,14 @@ export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditin
             Add New Phase
           </Button>
         )}
-      </DialogTrigger>
-      <DialogContent className="glassmorphism border-emerald-800/30 bg-slate-900/95 text-white max-w-md max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-white">
+      </SheetTrigger>
+      <SheetContent className="glassmorphism border-emerald-800/30 bg-slate-900/95 text-white w-96 overflow-y-auto">
+        <SheetHeader>
+          <SheetTitle className="text-white">
             {isEditing ? 'Edit ICO Phase' : 'Add New ICO Phase'}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+          </SheetTitle>
+        </SheetHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
           <div>
             <Label htmlFor="phase" className="text-slate-300">Phase Name *</Label>
             <Input
@@ -172,27 +172,27 @@ export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditin
             />
           </div>
           
-          <div>
-            <Label htmlFor="rewardPercentage" className="text-slate-300">Reward Percentage</Label>
-            <Input
-              id="rewardPercentage"
-              value={formData.rewardPercentage}
-              onChange={(e) => handleInputChange('rewardPercentage', e.target.value)}
-              className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
-              placeholder="e.g., 15%"
-            />
-          </div>
-          
-          <div>
-            <Label htmlFor="description" className="text-slate-300">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600 resize-none"
-              placeholder="Describe this ICO phase..."
-              rows={3}
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="rewardPercentage" className="text-slate-300">Reward %</Label>
+              <Input
+                id="rewardPercentage"
+                value={formData.rewardPercentage}
+                onChange={(e) => handleInputChange('rewardPercentage', e.target.value)}
+                className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
+                placeholder="e.g., 15%"
+              />
+            </div>
+            <div>
+              <Label htmlFor="description" className="text-slate-300">Description</Label>
+              <Input
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange('description', e.target.value)}
+                className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
+                placeholder="Brief description"
+              />
+            </div>
           </div>
           
           <div className="flex gap-2 pt-4">
@@ -212,7 +212,7 @@ export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditin
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }
