@@ -21,7 +21,7 @@ interface IcoPhase {
 }
 
 interface AddIcoPhaseDialogProps {
-  onAddPhase: (phase: IcoPhase) => void;
+  onAddPhase?: (phase: IcoPhase) => void;
   editPhase?: IcoPhase;
   onEditPhase?: (phase: IcoPhase) => void;
   isEditing?: boolean;
@@ -61,7 +61,7 @@ export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditin
 
     if (isEditing && onEditPhase) {
       onEditPhase(newPhase);
-    } else {
+    } else if (onAddPhase) {
       onAddPhase(newPhase);
     }
     
