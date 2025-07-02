@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,22 +16,29 @@ interface IcoPhase {
   endDate: string;
   allocationSold: string;
   status: 'Active' | 'Completed' | 'Upcoming';
+  description?: string;
+  rewardPercentage?: string;
 }
 
 interface AddIcoPhaseDialogProps {
   onAddPhase: (phase: IcoPhase) => void;
+  editPhase?: IcoPhase;
+  onEditPhase?: (phase: IcoPhase) => void;
+  isEditing?: boolean;
 }
 
-export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
+export function AddIcoPhaseDialog({ onAddPhase, editPhase, onEditPhase, isEditing = false }: AddIcoPhaseDialogProps) {
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
-    phase: '',
-    price: '',
-    duration: '',
-    startDate: '',
-    endDate: '',
-    allocationSold: '0%',
-    status: 'Upcoming' as const
+    phase: editPhase?.phase || '',
+    price: editPhase?.price || '',
+    duration: editPhase?.duration || '',
+    startDate: editPhase?.startDate || '',
+    endDate: editPhase?.endDate || '',
+    allocationSold: editPhase?.allocationSold || '0%',
+    status: editPhase?.status || 'Upcoming' as const,
+    description: editPhase?.description || '',
+    rewardPercentage: editPhase?.rewardPercentage || ''
   });
   const { toast } = useToast();
 
@@ -51,7 +59,12 @@ export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
       allocationSold: formData.allocationSold || '0%'
     };
 
-    onAddPhase(newPhase);
+    if (isEditing && onEditPhase) {
+      onEditPhase(newPhase);
+    } else {
+      onAddPhase(newPhase);
+    }
+    
     setOpen(false);
     setFormData({
       phase: '',
@@ -60,12 +73,14 @@ export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
       startDate: '',
       endDate: '',
       allocationSold: '0%',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      description: '',
+      rewardPercentage: ''
     });
 
     toast({
       title: "Success",
-      description: "ICO phase added successfully",
+      description: isEditing ? "ICO phase updated successfully" : "ICO phase added successfully",
     });
   };
 
@@ -79,14 +94,22 @@ export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
-          <Plus className="w-4 h-4 mr-2" />
-          Add New Phase
-        </Button>
+        {isEditing ? (
+          <Button size="sm" variant="outline" className="border-emerald-800/30 text-emerald-400 hover:bg-emerald-900/20">
+            Edit
+          </Button>
+        ) : (
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Plus className="w-4 h-4 mr-2" />
+            Add New Phase
+          </Button>
+        )}
       </DialogTrigger>
-      <DialogContent className="glassmorphism border-emerald-800/30 bg-slate-900/95 text-white max-w-md">
+      <DialogContent className="glassmorphism border-emerald-800/30 bg-slate-900/95 text-white max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-white">Add New ICO Phase</DialogTitle>
+          <DialogTitle className="text-white">
+            {isEditing ? 'Edit ICO Phase' : 'Add New ICO Phase'}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -149,6 +172,29 @@ export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
             />
           </div>
           
+          <div>
+            <Label htmlFor="rewardPercentage" className="text-slate-300">Reward Percentage</Label>
+            <Input
+              id="rewardPercentage"
+              value={formData.rewardPercentage}
+              onChange={(e) => handleInputChange('rewardPercentage', e.target.value)}
+              className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600"
+              placeholder="e.g., 15%"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="description" className="text-slate-300">Description</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className="bg-slate-800/50 border-emerald-800/30 text-white focus:border-emerald-600 resize-none"
+              placeholder="Describe this ICO phase..."
+              rows={3}
+            />
+          </div>
+          
           <div className="flex gap-2 pt-4">
             <Button
               type="button"
@@ -162,7 +208,7 @@ export function AddIcoPhaseDialog({ onAddPhase }: AddIcoPhaseDialogProps) {
               type="submit"
               className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
             >
-              Add Phase
+              {isEditing ? 'Update Phase' : 'Add Phase'}
             </Button>
           </div>
         </form>

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,8 @@ interface IcoPhase {
   endDate: string;
   allocationSold: string;
   status: 'Active' | 'Completed' | 'Upcoming';
+  description?: string;
+  rewardPercentage?: string;
 }
 
 export function TokenPackageControl() {
@@ -27,7 +30,9 @@ export function TokenPackageControl() {
       startDate: '2023-09-01T00:00:00Z',
       endDate: '2023-09-30T23:59:59Z',
       allocationSold: '100%',
-      status: 'Completed'
+      status: 'Completed',
+      description: 'Initial launch phase with early bird pricing',
+      rewardPercentage: '20%'
     },
     {
       phase: 'Phase 2',
@@ -36,7 +41,9 @@ export function TokenPackageControl() {
       startDate: '2023-10-01T00:00:00Z',
       endDate: '2023-11-15T23:59:59Z',
       allocationSold: '68%',
-      status: 'Active'
+      status: 'Active',
+      description: 'Growth phase with enhanced features',
+      rewardPercentage: '15%'
     },
     {
       phase: 'Phase 3',
@@ -45,7 +52,9 @@ export function TokenPackageControl() {
       startDate: '2023-11-16T00:00:00Z',
       endDate: '2024-01-15T23:59:59Z',
       allocationSold: '0%',
-      status: 'Upcoming'
+      status: 'Upcoming',
+      description: 'Expansion phase with premium benefits',
+      rewardPercentage: '10%'
     }
   ]);
 
@@ -63,6 +72,12 @@ export function TokenPackageControl() {
 
   const handleAddPhase = (newPhase: IcoPhase) => {
     setIcoPhases(prev => [...prev, newPhase]);
+  };
+
+  const handleEditPhase = (editedPhase: IcoPhase, index: number) => {
+    setIcoPhases(prev => 
+      prev.map((phase, i) => i === index ? editedPhase : phase)
+    );
   };
 
   const getStatusBadge = (status: string) => {
@@ -169,6 +184,7 @@ export function TokenPackageControl() {
                     <TableHead className="text-slate-300">Price</TableHead>
                     <TableHead className="text-slate-300">Duration</TableHead>
                     <TableHead className="text-slate-300">Dates</TableHead>
+                    <TableHead className="text-slate-300">Reward %</TableHead>
                     <TableHead className="text-slate-300">Allocation Sold</TableHead>
                     <TableHead className="text-slate-300">Status</TableHead>
                     <TableHead className="text-slate-300">Actions</TableHead>
@@ -183,6 +199,7 @@ export function TokenPackageControl() {
                       <TableCell className="text-white">
                         {formatDateTime(phase.startDate)} to {formatDateTime(phase.endDate)}
                       </TableCell>
+                      <TableCell className="text-emerald-400">{phase.rewardPercentage || 'N/A'}</TableCell>
                       <TableCell>
                         <Badge className={getStatusBadge(phase.status)}>
                           {phase.allocationSold}
@@ -194,9 +211,11 @@ export function TokenPackageControl() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button size="sm" variant="outline" className="border-emerald-800/30 text-emerald-400 hover:bg-emerald-900/20">
-                          Edit
-                        </Button>
+                        <AddIcoPhaseDialog 
+                          editPhase={phase}
+                          onEditPhase={(editedPhase) => handleEditPhase(editedPhase, index)}
+                          isEditing={true}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
