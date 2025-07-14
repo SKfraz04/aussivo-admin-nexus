@@ -63,7 +63,18 @@ export function EditPromoCodeDialog({
     maxDiscount: 0,
     usageLimit: 100,
     minPurchase: 0,
-    status: 'active'
+    status: 'active',
+    // User-centric specific fields
+    targetType: 'all',
+    specificUsers: '',
+    userGroups: [],
+    emailDomains: '',
+    usagePerUser: 1,
+    customerSegment: 'all',
+    // Public specific fields
+    isStackable: false,
+    priority: 1,
+    redemptionLimit: 'unlimited',
   });
 
   useEffect(() => {
@@ -77,16 +88,33 @@ export function EditPromoCodeDialog({
         maxDiscount: 0,
         usageLimit: parseInt(promoCode.usage.split('/')[1]) || 100,
         minPurchase: 0,
-        status: promoCode.status
+        status: promoCode.status,
+        targetType: promoCode.target || 'all',
+        specificUsers: '',
+        userGroups: [],
+        emailDomains: '',
+        usagePerUser: 1,
+        customerSegment: 'all',
+        isStackable: false,
+        priority: 1,
+        redemptionLimit: 'unlimited',
       });
-      setPromoType(promoCode.type.toLowerCase().replace('-', ''));
+      setPromoType(promoCode.type.toLowerCase().replace('-', '').replace('centric', 'centric'));
+      // Set discount type based on discount string
+      if (promoCode.discount.includes('%')) {
+        setDiscountType('percentage');
+      } else if (promoCode.discount.includes('$')) {
+        setDiscountType('fixed');
+      } else if (promoCode.discount.includes('+')) {
+        setDiscountType('bonus');
+      }
       if (promoCode.validUntil) {
         setEndDate(new Date(promoCode.validUntil));
       }
     }
   }, [promoCode]);
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -102,6 +130,94 @@ export function EditPromoCodeDialog({
       onUpdatePromoCode(updatedPromo);
     }
     onOpenChange(false);
+  };
+
+  const renderUserCentricFields = () => {
+    if (promoType !== 'usercentric') return null;
+    
+    return (
+      <div className="space-y-4 p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+        <h4 className="text-lg font-semibold text-emerald-400">Targeting Configuration</h4>
+        
+        <div className="space-y-2">
+          <Label className="text-slate-300 font-medium">Target Type</Label>
+          <Select value={formData.targetType} onValueChange={(value) => handleInputChange('targetType', value)}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-600">
+              <SelectItem value="all">All Users</SelectItem>
+              <SelectItem value="specific-users">Specific Users</SelectItem>
+              <SelectItem value="user-groups">User Groups</SelectItem>
+              <SelectItem value="email-domains">Email Domains</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {formData.targetType === 'specific-users' && (
+          <div className="space-y-2">
+            <Label htmlFor="specificUsers" className="text-slate-300 font-medium">Specific Users</Label>
+            <Textarea
+              id="specificUsers"
+              value={formData.specificUsers}
+              onChange={(e) => handleInputChange('specificUsers', e.target.value)}
+              className="bg-slate-800/50 border-slate-600 text-white resize-none"
+              placeholder="Enter emails or usernames, separated by commas"
+              rows={3}
+            />
+          </div>
+        )}
+
+        {formData.targetType === 'email-domains' && (
+          <div className="space-y-2">
+            <Label htmlFor="emailDomains" className="text-slate-300 font-medium">Email Domains</Label>
+            <Input
+              id="emailDomains"
+              value={formData.emailDomains}
+              onChange={(e) => handleInputChange('emailDomains', e.target.value)}
+              className="bg-slate-800/50 border-slate-600 text-white"
+              placeholder="example.com, company.org"
+            />
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="usagePerUser" className="text-slate-300 font-medium">Usage Per User</Label>
+          <Input
+            id="usagePerUser"
+            type="number"
+            min="1"
+            value={formData.usagePerUser}
+            onChange={(e) => handleInputChange('usagePerUser', Number(e.target.value))}
+            className="bg-slate-800/50 border-slate-600 text-white"
+            placeholder="1"
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderPublicFields = () => {
+    if (promoType !== 'public') return null;
+    
+    return (
+      <div className="space-y-4 p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+        <h4 className="text-lg font-semibold text-emerald-400">Public Code Configuration</h4>
+        
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="isStackable"
+            checked={formData.isStackable}
+            onChange={(e) => handleInputChange('isStackable', e.target.checked)}
+            className="w-4 h-4 text-emerald-600 bg-slate-800 border-slate-600 rounded focus:ring-emerald-500"
+          />
+          <Label htmlFor="isStackable" className="text-slate-300 font-medium">
+            Allow stacking with other codes
+          </Label>
+        </div>
+      </div>
+    );
   };
 
   if (!promoCode) return null;
@@ -170,6 +286,10 @@ export function EditPromoCodeDialog({
               placeholder="100"
             />
           </div>
+
+          {/* Type-specific Configuration */}
+          {renderUserCentricFields()}
+          {renderPublicFields()}
 
           {/* End Date */}
           <div className="space-y-2">

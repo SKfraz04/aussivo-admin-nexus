@@ -51,6 +51,17 @@ export function CreatePromoCodeDialog({
     maxDiscount: 0,
     usageLimit: 100,
     minPurchase: 0,
+    // User-centric specific fields
+    targetType: 'all', // all, specific-users, user-groups, email-domains
+    specificUsers: '',
+    userGroups: [],
+    emailDomains: '',
+    usagePerUser: 1,
+    customerSegment: 'all',
+    // Public specific fields
+    isStackable: false,
+    priority: 1,
+    redemptionLimit: 'unlimited',
   });
 
   const generateCode = () => {
@@ -62,7 +73,7 @@ export function CreatePromoCodeDialog({
     setFormData(prev => ({ ...prev, code: result }));
   };
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -86,6 +97,15 @@ export function CreatePromoCodeDialog({
       maxDiscount: 0,
       usageLimit: 100,
       minPurchase: 0,
+      targetType: 'all',
+      specificUsers: '',
+      userGroups: [],
+      emailDomains: '',
+      usagePerUser: 1,
+      customerSegment: 'all',
+      isStackable: false,
+      priority: 1,
+      redemptionLimit: 'unlimited',
     });
     setStartDate(undefined);
     setEndDate(undefined);
@@ -156,6 +176,148 @@ export function CreatePromoCodeDialog({
       default:
         return null;
     }
+  };
+
+  const renderUserCentricFields = () => {
+    if (promoType !== 'user-centric') return null;
+    
+    return (
+      <div className="space-y-4 p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+        <h4 className="text-lg font-semibold text-emerald-400">Targeting Configuration</h4>
+        
+        {/* Target Type */}
+        <div className="space-y-2">
+          <Label className="text-slate-300 font-medium">Target Type</Label>
+          <Select value={formData.targetType} onValueChange={(value) => handleInputChange('targetType', value)}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-600">
+              <SelectItem value="all">All Users</SelectItem>
+              <SelectItem value="specific-users">Specific Users</SelectItem>
+              <SelectItem value="user-groups">User Groups</SelectItem>
+              <SelectItem value="email-domains">Email Domains</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Conditional Fields Based on Target Type */}
+        {formData.targetType === 'specific-users' && (
+          <div className="space-y-2">
+            <Label htmlFor="specificUsers" className="text-slate-300 font-medium">Specific Users (Email/Username)</Label>
+            <Textarea
+              id="specificUsers"
+              value={formData.specificUsers}
+              onChange={(e) => handleInputChange('specificUsers', e.target.value)}
+              className="bg-slate-800/50 border-slate-600 text-white resize-none"
+              placeholder="Enter emails or usernames, separated by commas"
+              rows={3}
+            />
+          </div>
+        )}
+
+        {formData.targetType === 'email-domains' && (
+          <div className="space-y-2">
+            <Label htmlFor="emailDomains" className="text-slate-300 font-medium">Email Domains</Label>
+            <Input
+              id="emailDomains"
+              value={formData.emailDomains}
+              onChange={(e) => handleInputChange('emailDomains', e.target.value)}
+              className="bg-slate-800/50 border-slate-600 text-white"
+              placeholder="example.com, company.org"
+            />
+          </div>
+        )}
+
+        {/* Customer Segment */}
+        <div className="space-y-2">
+          <Label className="text-slate-300 font-medium">Customer Segment</Label>
+          <Select value={formData.customerSegment} onValueChange={(value) => handleInputChange('customerSegment', value)}>
+            <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-slate-800 border-slate-600">
+              <SelectItem value="all">All Customers</SelectItem>
+              <SelectItem value="new">New Customers</SelectItem>
+              <SelectItem value="returning">Returning Customers</SelectItem>
+              <SelectItem value="vip">VIP Customers</SelectItem>
+              <SelectItem value="inactive">Inactive Customers</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Usage Per User */}
+        <div className="space-y-2">
+          <Label htmlFor="usagePerUser" className="text-slate-300 font-medium">Usage Per User</Label>
+          <Input
+            id="usagePerUser"
+            type="number"
+            min="1"
+            value={formData.usagePerUser}
+            onChange={(e) => handleInputChange('usagePerUser', Number(e.target.value))}
+            className="bg-slate-800/50 border-slate-600 text-white"
+            placeholder="1"
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const renderPublicFields = () => {
+    if (promoType !== 'public') return null;
+    
+    return (
+      <div className="space-y-4 p-4 bg-slate-800/30 rounded-lg border border-slate-700">
+        <h4 className="text-lg font-semibold text-emerald-400">Public Code Configuration</h4>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Priority */}
+          <div className="space-y-2">
+            <Label htmlFor="priority" className="text-slate-300 font-medium">Priority Level</Label>
+            <Select value={formData.priority.toString()} onValueChange={(value) => handleInputChange('priority', Number(value))}>
+              <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem value="1">High Priority</SelectItem>
+                <SelectItem value="2">Medium Priority</SelectItem>
+                <SelectItem value="3">Low Priority</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Redemption Limit */}
+          <div className="space-y-2">
+            <Label className="text-slate-300 font-medium">Redemption Limit</Label>
+            <Select value={formData.redemptionLimit} onValueChange={(value) => handleInputChange('redemptionLimit', value)}>
+              <SelectTrigger className="bg-slate-800/50 border-slate-600 text-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-slate-800 border-slate-600">
+                <SelectItem value="unlimited">Unlimited</SelectItem>
+                <SelectItem value="once-per-user">Once Per User</SelectItem>
+                <SelectItem value="daily">Daily Limit</SelectItem>
+                <SelectItem value="weekly">Weekly Limit</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Stackable Option */}
+        <div className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="isStackable"
+            checked={formData.isStackable}
+            onChange={(e) => handleInputChange('isStackable', e.target.checked)}
+            className="w-4 h-4 text-emerald-600 bg-slate-800 border-slate-600 rounded focus:ring-emerald-500"
+          />
+          <Label htmlFor="isStackable" className="text-slate-300 font-medium">
+            Allow stacking with other codes
+          </Label>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -239,10 +401,16 @@ export function CreatePromoCodeDialog({
             {renderDiscountFields()}
           </div>
 
+          {/* Type-specific Configuration */}
+          {renderUserCentricFields()}
+          {renderPublicFields()}
+
           {/* Usage and Purchase Limits */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="usageLimit" className="text-slate-300 font-medium">Total Usage Limit</Label>
+              <Label htmlFor="usageLimit" className="text-slate-300 font-medium">
+                {promoType === 'user-centric' ? 'Total Usage Limit' : 'Global Usage Limit'}
+              </Label>
               <Input
                 id="usageLimit"
                 type="number"
@@ -336,7 +504,12 @@ export function CreatePromoCodeDialog({
           <Button
             onClick={handleSubmit}
             className="bg-emerald-600 hover:bg-emerald-700 text-white w-full sm:w-auto"
-            disabled={!formData.code || !formData.description}
+            disabled={
+              !formData.code || 
+              !formData.description || 
+              (promoType === 'user-centric' && formData.targetType === 'specific-users' && !formData.specificUsers) ||
+              (promoType === 'user-centric' && formData.targetType === 'email-domains' && !formData.emailDomains)
+            }
           >
             Create Promo Code
           </Button>
