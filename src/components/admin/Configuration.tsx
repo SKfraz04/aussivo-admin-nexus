@@ -14,7 +14,17 @@ import {
   Plus,
   ToggleLeft,
   ToggleRight,
-  MoreHorizontal
+  MoreHorizontal,
+  Tag,
+  Search,
+  Copy,
+  Eye,
+  Trash2,
+  TrendingUp,
+  CheckCircle,
+  AlertCircle,
+  DollarSign,
+  Percent
 } from 'lucide-react';
 import {
   Table,
@@ -40,6 +50,7 @@ import {
 
 export function Configuration() {
   const [activeTab, setActiveTab] = useState('token-packages');
+  const [promoTab, setPromoTab] = useState('all-codes');
 
   const tokenSaleStages = [
     {
@@ -112,10 +123,59 @@ export function Configuration() {
     return variants[status as keyof typeof variants] || variants.Inactive;
   };
 
+  const promoCodes = [
+    {
+      code: 'WELCOME10',
+      type: 'Public',
+      description: 'New user welcome discount',
+      discount: '10%',
+      usage: '245/1000',
+      status: 'active',
+      validUntil: '12/31/2024'
+    },
+    {
+      code: 'VIP-USER-001',
+      type: 'User-Centric',
+      description: 'VIP user exclusive discount',
+      discount: '25%',
+      usage: '12/50',
+      status: 'active',
+      validUntil: '3/31/2024',
+      target: 'VIP Platinum'
+    },
+    {
+      code: 'BONUS20',
+      type: 'Public',
+      description: '20% bonus tokens on purchase',
+      discount: '+20%',
+      usage: '156/500',
+      status: 'active',
+      validUntil: '3/31/2024'
+    },
+    {
+      code: 'EARLY50',
+      type: 'Public',
+      description: '$50 fixed discount for early birds',
+      discount: '$50',
+      usage: '200/200',
+      status: 'expired',
+      validUntil: '1/31/2024'
+    }
+  ];
+
   const tabs = [
     { id: 'token-packages', label: 'Token & Packages', icon: Coins },
     { id: 'staking-apy', label: 'Staking & APY', icon: Target },
-    { id: 'referrals', label: 'Referrals & Leaderboard', icon: Users }
+    { id: 'referrals', label: 'Referrals & Leaderboard', icon: Users },
+    { id: 'promo-codes', label: 'Promo Code Management', icon: Tag }
+  ];
+
+  const promoTabs = [
+    { id: 'all-codes', label: 'All Promo Codes' },
+    { id: 'public-codes', label: 'Public Codes' },
+    { id: 'user-centric', label: 'User-Centric Codes' },
+    { id: 'analytics', label: 'Analytics' },
+    { id: 'settings', label: 'Settings' }
   ];
 
   return (
@@ -444,6 +504,337 @@ export function Configuration() {
                   </Button>
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {/* Promo Code Management */}
+          {activeTab === 'promo-codes' && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">Promo Code Management</h2>
+                  <p className="text-slate-300">Create and manage promotional codes for token sales</p>
+                </div>
+                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Promo Code
+                </Button>
+              </div>
+
+              {/* Promo Tab Navigation */}
+              <div className="flex flex-wrap gap-1 bg-slate-800/50 p-1 rounded-lg border border-emerald-800/30">
+                {promoTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setPromoTab(tab.id)}
+                    className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                      promoTab === tab.id
+                        ? 'bg-emerald-600/20 text-emerald-400 border border-emerald-600/30'
+                        : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* All Promo Codes */}
+              {promoTab === 'all-codes' && (
+                <Card className="glassmorphism border-emerald-800/30">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-white">All Promo Codes</CardTitle>
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <Input 
+                          placeholder="Search promo codes..." 
+                          className="pl-10 bg-slate-800/50 border-slate-600 text-white w-64"
+                        />
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-emerald-800/30">
+                          <TableHead className="text-slate-300">Code</TableHead>
+                          <TableHead className="text-slate-300">Type</TableHead>
+                          <TableHead className="text-slate-300">Description</TableHead>
+                          <TableHead className="text-slate-300">Discount</TableHead>
+                          <TableHead className="text-slate-300">Usage</TableHead>
+                          <TableHead className="text-slate-300">Status</TableHead>
+                          <TableHead className="text-slate-300">Valid Until</TableHead>
+                          <TableHead className="text-slate-300">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {promoCodes.map((promo, index) => (
+                          <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
+                            <TableCell className="text-white font-mono font-bold">{promo.code}</TableCell>
+                            <TableCell>
+                              <Badge className={promo.type === 'Public' ? 'bg-blue-900/20 text-blue-400 border-blue-600/30' : 'bg-purple-900/20 text-purple-400 border-purple-600/30'}>
+                                {promo.type}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-slate-300">{promo.description}</TableCell>
+                            <TableCell className="text-emerald-400 font-bold">{promo.discount}</TableCell>
+                            <TableCell className="text-white">{promo.usage}</TableCell>
+                            <TableCell>
+                              <Badge className={getStatusBadge(promo.status)}>
+                                {promo.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-slate-300">{promo.validUntil}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Copy className="mr-2 h-4 w-4" />
+                                    Copy Code
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-red-400 hover:text-red-300 hover:bg-red-900/20">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Public Codes */}
+              {promoTab === 'public-codes' && (
+                <Card className="glassmorphism border-emerald-800/30">
+                  <CardHeader>
+                    <CardTitle className="text-white">Public Promo Codes</CardTitle>
+                    <p className="text-slate-300">Codes available to all users</p>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-emerald-800/30">
+                          <TableHead className="text-slate-300">Code</TableHead>
+                          <TableHead className="text-slate-300">Description</TableHead>
+                          <TableHead className="text-slate-300">Discount</TableHead>
+                          <TableHead className="text-slate-300">Usage</TableHead>
+                          <TableHead className="text-slate-300">Status</TableHead>
+                          <TableHead className="text-slate-300">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {promoCodes.filter(promo => promo.type === 'Public').map((promo, index) => (
+                          <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
+                            <TableCell className="text-white font-mono font-bold">{promo.code}</TableCell>
+                            <TableCell className="text-slate-300">{promo.description}</TableCell>
+                            <TableCell className="text-emerald-400 font-bold">{promo.discount}</TableCell>
+                            <TableCell className="text-white">{promo.usage}</TableCell>
+                            <TableCell>
+                              <Badge className={getStatusBadge(promo.status)}>
+                                {promo.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Copy className="mr-2 h-4 w-4" />
+                                    Copy Code
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* User-Centric Codes */}
+              {promoTab === 'user-centric' && (
+                <Card className="glassmorphism border-emerald-800/30">
+                  <CardHeader>
+                    <CardTitle className="text-white">User-Centric Promo Codes</CardTitle>
+                    <p className="text-slate-300">Targeted codes for specific users or groups</p>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-emerald-800/30">
+                          <TableHead className="text-slate-300">Code</TableHead>
+                          <TableHead className="text-slate-300">Description</TableHead>
+                          <TableHead className="text-slate-300">Target</TableHead>
+                          <TableHead className="text-slate-300">Discount</TableHead>
+                          <TableHead className="text-slate-300">Usage</TableHead>
+                          <TableHead className="text-slate-300">Status</TableHead>
+                          <TableHead className="text-slate-300">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {promoCodes.filter(promo => promo.type === 'User-Centric').map((promo, index) => (
+                          <TableRow key={index} className="border-emerald-800/20 hover:bg-slate-800/50">
+                            <TableCell className="text-white font-mono font-bold">{promo.code}</TableCell>
+                            <TableCell className="text-slate-300">{promo.description}</TableCell>
+                            <TableCell>
+                              <Badge className="bg-purple-900/20 text-purple-400 border-purple-600/30">
+                                {promo.target}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="text-emerald-400 font-bold">{promo.discount}</TableCell>
+                            <TableCell>
+                              <div className="space-y-1">
+                                <div className="text-white">{promo.usage}</div>
+                                <div className="text-xs text-slate-400">Per user: 1</div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getStatusBadge(promo.status)}>
+                                {promo.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-slate-400 hover:text-white">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="bg-slate-800 border-slate-600">
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Eye className="mr-2 h-4 w-4" />
+                                    View Details
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem className="text-slate-300 hover:text-white hover:bg-slate-700">
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Analytics */}
+              {promoTab === 'analytics' && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="glassmorphism border-emerald-800/30">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-300 text-sm font-medium">Total Promo Codes</p>
+                          <p className="text-3xl font-bold text-white">4</p>
+                          <p className="text-xs text-slate-400">Active promotional campaigns</p>
+                        </div>
+                        <div className="p-3 bg-emerald-600/20 rounded-full">
+                          <Tag className="h-6 w-6 text-emerald-400" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="glassmorphism border-emerald-800/30">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-300 text-sm font-medium">Total Uses</p>
+                          <p className="text-3xl font-bold text-white">613</p>
+                          <p className="text-xs text-slate-400">Across all campaigns</p>
+                        </div>
+                        <div className="p-3 bg-blue-600/20 rounded-full">
+                          <TrendingUp className="h-6 w-6 text-blue-400" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="glassmorphism border-emerald-800/30">
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-slate-300 text-sm font-medium">Conversion Rate</p>
+                          <p className="text-3xl font-bold text-white">78.5%</p>
+                          <p className="text-xs text-slate-400">Users who complete purchase</p>
+                        </div>
+                        <div className="p-3 bg-purple-600/20 rounded-full">
+                          <Percent className="h-6 w-6 text-purple-400" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
+              {/* Settings */}
+              {promoTab === 'settings' && (
+                <div className="space-y-6">
+                  <Card className="glassmorphism border-emerald-800/30">
+                    <CardHeader>
+                      <CardTitle className="text-white">Global Promo Code Settings</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-white font-medium">Allow Multiple Promo Codes</h4>
+                          <p className="text-slate-300 text-sm">Allow users to apply multiple promo codes per transaction</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <Switch />
+                          <Button variant="outline" className="text-slate-300 border-slate-600 hover:bg-slate-700">
+                            Configure
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-slate-700 pt-6">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="text-white font-medium">Default Usage Limit</h4>
+                            <p className="text-slate-300 text-sm">Default usage limit for new promo codes</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Input 
+                              defaultValue="1000" 
+                              className="w-24 bg-slate-800/50 border-slate-600 text-white text-center"
+                            />
+                            <Button variant="outline" className="text-slate-300 border-slate-600 hover:bg-slate-700">
+                              Set Default
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
           )}
         </div>
