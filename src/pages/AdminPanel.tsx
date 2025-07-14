@@ -12,6 +12,7 @@ import { GovernanceDAO } from '../components/admin/GovernanceDAO';
 import { RewardsBurnControl } from '../components/admin/RewardsBurnControl';
 import { StakingHistoryPackages } from '../components/admin/StakingHistoryPackages';
 import { ReportsAnalytics } from '../components/admin/ReportsAnalytics';
+import { PromoCodeManagement } from '../components/admin/PromoCodeManagement';
 import AdminHeader from '../components/admin/AdminHeader';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
@@ -22,6 +23,7 @@ export type AdminSection =
   | 'token-package-control'
   | 'staking-apy-settings'
   | 'referrals-leaderboard'
+  | 'promo-code-management'
   | 'governance-dao'
   | 'rewards-burn-control'
   | 'staking-history-packages'
@@ -45,6 +47,7 @@ const AdminPanel = ({ section }: AdminPanelProps) => {
     '/admin/token-package-control': 'token-package-control',
     '/admin/staking-apy-settings': 'staking-apy-settings',
     '/admin/referrals-leaderboard': 'referrals-leaderboard',
+    '/admin/promo-code-management': 'promo-code-management',
     '/admin/governance-dao': 'governance-dao',
     '/admin/rewards-burn-control': 'rewards-burn-control',
     '/admin/staking-history-packages': 'staking-history-packages',
@@ -78,6 +81,7 @@ const AdminPanel = ({ section }: AdminPanelProps) => {
       'token-package-control': <TokenPackageControl />,
       'staking-apy-settings': <StakingAPYSettings />,
       'referrals-leaderboard': <ReferralsLeaderboard />,
+      'promo-code-management': <PromoCodeManagement />,
       'governance-dao': <GovernanceDAO />,
       'rewards-burn-control': <RewardsBurnControl />,
       'staking-history-packages': <StakingHistoryPackages />,

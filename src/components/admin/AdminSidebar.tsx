@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import {
   BarChart3,
@@ -16,7 +15,8 @@ import {
   History,
   PieChart,
   LogOut,
-  User
+  User,
+  Tag
 } from 'lucide-react';
 import {
   Sidebar,
@@ -80,6 +80,11 @@ const menuGroups = [
         title: 'Referrals & Leaderboard',
         section: 'referrals-leaderboard' as AdminSection,
         icon: Trophy,
+      },
+      {
+        title: 'Promo Code Management',
+        section: 'promo-code-management' as AdminSection,
+        icon: Tag,
       },
     ]
   },
