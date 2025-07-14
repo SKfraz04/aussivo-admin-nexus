@@ -30,9 +30,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { CreatePromoCodeDialog } from './dialogs/CreatePromoCodeDialog';
 
 export function PromoCodeManagement() {
   const [activeTab, setActiveTab] = useState('all-codes');
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const promoCodes = [
     {
@@ -83,6 +85,11 @@ export function PromoCodeManagement() {
     return variants[status as keyof typeof variants] || variants.inactive;
   };
 
+  const handleCreatePromoCode = (promoData: any) => {
+    console.log('Creating promo code:', promoData);
+    // Here you would typically send the data to your backend
+  };
+
   const tabs = [
     { id: 'all-codes', label: 'All Promo Codes' },
     { id: 'public-codes', label: 'Public Codes' },
@@ -100,7 +107,7 @@ export function PromoCodeManagement() {
             <h1 className="text-3xl font-bold text-white mb-2">Promo Code Management</h1>
             <p className="text-slate-300">Create and manage promotional codes for token sales</p>
           </div>
-          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white">
+          <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => setCreateDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Create Promo Code
           </Button>
@@ -431,6 +438,12 @@ export function PromoCodeManagement() {
           )}
         </div>
       </div>
+
+      <CreatePromoCodeDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        onCreatePromoCode={handleCreatePromoCode}
+      />
     </div>
   );
 }
