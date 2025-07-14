@@ -47,6 +47,10 @@ const AppContent = () => {
           element={isAuthenticated ? <AdminPanel section="referrals-leaderboard" /> : <LoginScreen />} 
         />
         <Route 
+          path="/admin/promo-code-management" 
+          element={isAuthenticated ? <AdminPanel section="promo-code-management" /> : <LoginScreen />} 
+        />
+        <Route 
           path="/admin/governance-dao" 
           element={isAuthenticated ? <AdminPanel section="governance-dao" /> : <LoginScreen />} 
         />
